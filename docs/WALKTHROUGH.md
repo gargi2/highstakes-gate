@@ -129,6 +129,18 @@ Two rules that the tests enforce:
   sweep, not a single number.
 - **Extreme shifts leave the histogram support** and become invisible (empty
   noised histogram → NaN divergence); severity factors are capped in-range.
+- **Detection ≠ withholding.** The consensus detectors *flag* distributional and
+  label degradations (detection recall ≈1 at ε=∞), but a single consensus
+  failure is one check among ~15 in `readiness.score_source`, so the READY/
+  EXCLUDE decision usually does NOT withhold those sources (`degraded_withheld`
+  ≈ 0 for distributional/label). Structural and completeness degradations *are*
+  withheld (schema-incompatible or multiple null failures). The
+  `det_*` columns measure detection; `degraded_withheld` measures the gate
+  action — the benchmark reports both because they differ.
+- **Real-data label choices.** healthcare uses a 0.30 null tolerance (real MIMIC
+  labs are ~23-24 % missing at baseline); government predicts payment nature =
+  Food-and-Beverage (~0.9 prevalence, learnable from amount/frequency) because
+  the dispute flag is ~0.002 % positive and yields no downstream metric.
 - **Consensus assumes <50 % of sources are degraded** (median/mean consensus);
   the default grid degrades 2 of 6.
 - **Real loaders are format-specific.** finance expects EDGAR `num.txt`

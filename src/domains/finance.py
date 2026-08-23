@@ -69,25 +69,30 @@ def synthetic(n_rows: int, seed: int) -> pd.DataFrame:
     })
 
 
-def _resolve_num(data_root: str) -> str:
+def _resolve_nums(data_root: str) -> list[str]:
     if os.path.isfile(data_root):
-        return data_root
+        return [data_root]
     hits = sorted(glob.glob(os.path.join(data_root, "**", "num.txt"), recursive=True))
     if not hits:
         raise RuntimeError(f"finance: no num.txt found under {data_root}")
-    return hits[0]
+    return hits
 
 
 def load(data_root: str, chunksize: int) -> Iterator[pd.DataFrame]:
-    """Stream num.txt, keep target tags, pivot to one row per filing (adsh)."""
-    path = _resolve_num(data_root)
+    """Stream every num.txt under data_root, keep target tags, pivot per filing.
+
+    Reading all quarters found under the root (a single EDGAR quarter yields only
+    ~1.4k filings that report all five tags) gives a usable cohort; adsh is
+    globally unique so quarters simply union.
+    """
     keep = set(TAGS)
     collected: dict[str, dict[str, float]] = {}
-    for chunk in pd.read_csv(path, sep="\t", usecols=["adsh", "tag", "qtrs", "value"],
-                             chunksize=chunksize, low_memory=False):
-        sub = chunk[chunk["tag"].isin(keep)]
-        for adsh, tag, val in zip(sub["adsh"], sub["tag"], sub["value"]):
-            collected.setdefault(adsh, {})[TAGS[tag]] = val
+    for path in _resolve_nums(data_root):
+        for chunk in pd.read_csv(path, sep="\t", usecols=["adsh", "tag", "qtrs", "value"],
+                                 chunksize=chunksize, low_memory=False):
+            sub = chunk[chunk["tag"].isin(keep)]
+            for adsh, tag, val in zip(sub["adsh"], sub["tag"], sub["value"]):
+                collected.setdefault(adsh, {})[TAGS[tag]] = val
     if not collected:
         return
     pivot = pd.DataFrame.from_dict(collected, orient="index")

@@ -60,9 +60,24 @@ def _eps_str(e: float) -> str:
     return "inf" if math.isinf(e) else str(e)
 
 
+# Real extracts (finance num.txt ~0.5 GB, government CSV ~9 GB) are read ONCE per
+# domain and reused across every grid cell — per-cell variation comes from the
+# seeded shuffle/split/degrade on the fixed frame, not from re-reading the file.
+# Synthetic frames are seed-dependent and cheap, so they are never cached.
+_FRAME_CACHE: dict[str, tuple[pd.DataFrame, str]] = {}
+
+
+def _frame_for(domain, seed, cfg) -> tuple[pd.DataFrame, str]:
+    data_root = cfg["data_root"].get(domain.name)
+    if data_root is None:
+        return domain.get_frame(cfg["n_rows"], seed, None, cfg["max_rows"])
+    if domain.name not in _FRAME_CACHE:
+        _FRAME_CACHE[domain.name] = domain.get_frame(cfg["n_rows"], seed, data_root, cfg["max_rows"])
+    return _FRAME_CACHE[domain.name]
+
+
 def run_cell(domain, mode, severity, epsilon, seed, cfg) -> dict:
-    df, prov = domain.get_frame(cfg["n_rows"], seed, cfg["data_root"].get(domain.name),
-                                cfg["max_rows"])
+    df, prov = _frame_for(domain, seed, cfg)
     rng = np.random.default_rng(seed)
     idx = rng.permutation(len(df))
     n_test = max(20, int(0.2 * len(df)))

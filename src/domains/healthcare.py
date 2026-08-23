@@ -34,7 +34,8 @@ HIST_RANGES = {
 def _resolve_csv(data_root: str) -> str:
     if os.path.isfile(data_root):
         return data_root
-    hits = sorted(glob.glob(os.path.join(data_root, "*.csv")))
+    hits = sorted(glob.glob(os.path.join(data_root, "*.csv"))
+                  + glob.glob(os.path.join(data_root, "*.csv.gz")))
     if not hits:
         raise RuntimeError(f"healthcare: no CSV found under {data_root}")
     return hits[0]
@@ -58,6 +59,12 @@ DOMAIN = register(Domain(
     synthetic=make_synthetic_clinical,
     loader=load,
     divergence_threshold=0.026,  # calibrated on clean sources at epsilon=inf
+    # Real MIMIC labs carry ~23-24% baseline missingness (verified via the
+    # aggregate loader), so a 0.05 null tolerance would EXCLUDE every clean
+    # source. 0.30 tolerates realistic clinical missingness; a completeness
+    # injection detected only once it pushes a column ABOVE this — low-severity
+    # (10%) null bumps fall within tolerance by design (see WALKTHROUGH).
+    null_threshold=0.30,
     notes="In-hospital mortality; synthetic = MIMIC-like generator (FedCheck).",
 ))
 

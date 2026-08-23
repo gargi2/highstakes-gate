@@ -67,6 +67,34 @@ sources at ε=∞ (healthcare 0.026, finance 0.055, government 0.045) and passed
 - **cross-source** and **provenance** taxonomy modes are not row-injectable and
   are out of scope for this harness (documented).
 
+### V5 — real-data validation (small grid, aggregates only) — 2026-08-23
+Real extracts placed under `data/` (gitignored): EDGAR quarters 2024q1–2026q1
+(`num.txt`), CMS Open Payments general payments PGYR2025 (8.6 GB CSV), and the
+FedCheck MIMIC-IV full cohort `data/healthcare/mimic-full-cohort.csv.gz`
+(546,029 rows, DUA-restricted — used read-only, aggregates only).
+```bash
+.venv/Scripts/python.exe experiments/run_crossdomain.py \
+  --modes none completeness distributional label structural \
+  --epsilons inf --seeds 2 --severities high --max-rows 20000 \
+  --data-root healthcare=data/healthcare --data-root finance=data \
+  --data-root government=data/PGYR2025_P06302026_06032026 --out-dir <tmp>
+```
+Outcome (ε=∞): **all three domains clean(none) ready=6/6, clean_excluded=0,
+false_flag=0.0** (healthcare 0.30 null tolerance and government Food/Beverage
+label both verified against real data). Detection recall=1.0 for all modes
+except finance/label (balanced-label blind spot). Downstream AUC on real data:
+healthcare ≈0.86, finance ≈0.66, government ≈0.92 (all defined). Confirmed
+detection ≠ withholding (distributional/label detected but `degraded_withheld`≈0).
+The one-time per-domain frame cache (`_FRAME_CACHE`) makes this feasible: the
+8.6 GB CSV / EDGAR set is read once per domain, not per cell.
+
+Real-data findings recorded (not bugs):
+- MIMIC labs ~23-24 % baseline null → healthcare `null_threshold=0.30`.
+- Open Payments dispute rate ≈0.002 % (59 / 3,000,000) → label switched to
+  payment-nature = Food-and-Beverage (~0.93 positive on the real 50k head).
+- One EDGAR quarter yields only ~1.4k filings with all five tags → finance
+  loader reads every `num.txt` under the root (7 quarters ≈ 11k filings).
+
 ### Pending (human runs; no assistant credits)
-Full grid + real extractions — see `--print-commands`. Results land in
-`experiments/results/crossdomain_<domain>.csv`.
+Full grid + real extractions — see `--print-commands` and the commands below.
+Results land in `experiments/results/crossdomain_<domain>.csv`.
