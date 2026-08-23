@@ -1,0 +1,9 @@
+{
+  "expectations": [
+    {"check_id": "c1", "kind": "column_exists", "column": "lab_hemoglobin", "severity": "blocking"},
+    {"check_id": "c2", "kind": "column_dtype", "column": "age", "params": {"dtype": "int"}, "severity": "blocking"},
+    {"check_id": "c3", "kind": "null_fraction_max", "column": "lab_creatinine", "params": {"max": 0.05}, "severity": "blocking"},
+    {"check_id": "c4", "kind": "value_range", "column": "age", "params": {"min": 0, "max": 120}, "severity": "major"},
+    {"check_id": "c5", "kind": "min_row_count", "params": {"min": 1000}, "severity": "major"}
+  ]
+}
