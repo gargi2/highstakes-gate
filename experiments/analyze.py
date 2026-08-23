@@ -310,6 +310,54 @@ def fig_downstream(df: pd.DataFrame) -> None:
 
 
 # ----------------------------------------------------------------------------
+# Figure 6 — THE SPINE: detection rate vs gate-action rate, and the gap
+# ----------------------------------------------------------------------------
+def fig_detection_action_gap(df: pd.DataFrame) -> None:
+    """Composite readiness scoring masks single-dimension defects: a source is
+    detected far more often than it is withheld. Aggregated over all 3 domains
+    at eps=inf (no DP noise), so the gap is a property of the scoring rule, not
+    of privacy noise."""
+    sub = df[(df["mode"] != "none") & np.isinf(df["epsilon"])].copy()
+    sub["withheld_frac"] = sub["degraded_withheld"] / N_DEGRADED
+    det = sub.groupby("mode")["det_recall"].mean().reindex(MODES)
+    act = sub.groupby("mode")["withheld_frac"].mean().reindex(MODES)
+    det_all, act_all = sub["det_recall"].mean(), sub["withheld_frac"].mean()
+
+    fig, ax = plt.subplots(figsize=(9.5, 4.8))
+    x = np.arange(len(MODES) + 1)
+    labels = [MODE_SHORT[m] for m in MODES] + ["ALL\n(mean)"]
+    d = list(det.values) + [det_all]
+    a = list(act.values) + [act_all]
+    w = 0.38
+    ax.bar(x - w / 2, d, w, label="detected (a check fired)", color="#0072B2")
+    ax.bar(x + w / 2, a, w, label="withheld (gate excluded it)", color="#E69F00")
+    for i in range(len(x)):
+        gap = d[i] - a[i]
+        ax.annotate("", xy=(x[i] + w / 2, a[i]), xytext=(x[i] + w / 2, d[i]),
+                    arrowprops=dict(arrowstyle="<->", color="#B00020", lw=1.3))
+        ax.text(x[i], max(d[i], a[i]) + 0.03, f"gap {gap:.2f}",
+                ha="center", fontsize=8.5, color="#B00020", fontweight="bold")
+    ax.axvline(len(MODES) - 0.5, ls=":", color="grey", alpha=0.6)
+    ax.set_xticks(x, labels)
+    ax.set_ylabel("fraction of degraded sources")
+    ax.set_ylim(0, 1.18)
+    ax.set_title("The spine: composite readiness scoring detects far more than it "
+                 "withholds", fontsize=12.5)
+    ax.legend(loc="upper center", ncol=2, fontsize=9)
+    fig.subplots_adjust(bottom=0.2)
+    fig.text(0.5, -0.11,
+             "Aggregated over all 3 domains at ε=∞. Overall the gate DETECTS "
+             f"{det_all:.2f} of degraded sources but WITHHOLDS only {act_all:.2f} — "
+             f"a {det_all - act_all:.2f} gap that persists in every mode except structural.\n"
+             "Mechanism: readiness = 0.4·check-pass-rate + 0.3·schema + 0.3·divergence, "
+             "READY at ≥0.8, so one failed check among ~15 (pass-rate 1.00→0.93) is averaged "
+             "away and the source still scores READY.\n"
+             "Source: crossdomain_*.csv (det_recall vs degraded_withheld); rule: src/gate/readiness.py.",
+             ha="center", fontsize=8.5)
+    _save(fig, "fig6_detection_action_gap")
+
+
+# ----------------------------------------------------------------------------
 # Metrics summary CSV — one row per (domain, mode, epsilon)
 # ----------------------------------------------------------------------------
 def write_summary(df: pd.DataFrame) -> Path:
@@ -364,6 +412,7 @@ def main() -> int:
     fig_privacy_utility(df)
     fig_cross_domain(df)
     fig_downstream(df)
+    fig_detection_action_gap(df)
     write_summary(df)
     print("done.")
     return 0

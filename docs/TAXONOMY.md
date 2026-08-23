@@ -226,4 +226,26 @@ verbatim anchor for this loop.
    by this corpus.
 5. **Inter-rater reliability is pending** the human coding of the seeded sample;
    no agreement statistic is reported here until `code_agreement.py` runs on real
-   labels.
+   labels. The pipeline (seeded 30-incident sample, Cohen's κ on mode **and**
+   detectability, filter precision, machine coding as a disclosed 2nd annotator)
+   already exists; only the human pass is unrun. Plan to close this — intra-rater
+   blind re-annotation for sole authorship, plus reporting the **undeterminable
+   rate** — is in `docs/NEXT_EXPERIMENTS.md` §8.
+
+## Positioning against prior taxonomies (state this in the intro)
+
+This is **not** another taxonomy of AI incident *causes*, and reviewers will know
+the prior art, so the differentiation must be explicit:
+
+- **AIID's own technical-failure taxonomies** (CSET, GMF) and the **MIT AI Risk
+  Repository** (causal + domain taxonomies) classify *what went wrong and why*.
+  This work reuses their labels (see Limitation 2) but asks a different, narrower,
+  **operational** question: *is the failure's data root cause detectable by a
+  validation gate run **before** training?* — a yes/partial/no per mode.
+- **Sambasivan et al. (data cascades)** established that upstream data problems
+  cause downstream harm. This work does not re-establish that; it asks which of
+  those problems are **pre-training-detectable and gateable**, and benchmarks a
+  gate that tries.
+
+The contribution is the **detectability lens + the operational gate + the
+governance mapping**, not the incident classification itself.

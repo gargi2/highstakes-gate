@@ -53,12 +53,25 @@ Quoted from `metrics_summary.csv` (ε=inf rows) and shown in
   precision = 1.00; `crossdomain_*.csv`, mode=structural). Schema/dtype breaks are
   unambiguous and transfer without tuning.
 - **The label-rate detector is blind on finance** (recall 0.00 at every ε;
-  `crossdomain_finance.csv`, mode=label). Finance's `adverse` label is ≈0.42
-  positive — near-balanced — and a symmetric label flip barely moves the positive
-  *rate* the detector watches. On rare-label tasks (healthcare mortality,
-  government food-and-beverage) the same detector reaches 0.67. This is the single
-  clearest **negative result** and is a property of a marginal-based detector, not
-  a bug.
+  `crossdomain_finance.csv`, mode=label) — and this is a **proven limitation with a
+  derivation**, not an empirical surprise. The detector compares a source's
+  positive *rate* against consensus. For a base rate `p` and a **symmetric** flip
+  of a fraction `r` of labels (`src/domains/degradations.py`, `label_noise`), the
+  post-flip positive rate is
+
+  > `p' = p(1−r) + (1−p)r = p + r(1−2p)`.
+
+  The shift is `r·(1−2p)`, which **vanishes as p→0.5**. Finance's `adverse` base
+  rate is ≈0.42, so even the `high` flip (`r=0.45`) moves the marginal only
+  ≈`0.45·(1−0.84)=0.072` — below the detector's deviation threshold → recall 0. On
+  rare-label tasks (healthcare mortality, government food-and-beverage, `p`≪0.5)
+  the same `r` produces a large shift, hence recall 0.67. **Result: marginal
+  label-rate checks are provably blind to symmetric label noise on balanced
+  targets.** Two consequences for the paper, both future work in
+  `docs/NEXT_EXPERIMENTS.md`: (i) test **asymmetric** noise, where `p'` *does*
+  move, to turn the binary miss into a detectability-threshold curve; (ii) add a
+  detector with a mechanism to see symmetric noise (confident-learning /
+  cross-validated disagreement) so we report a fix, not just a hole.
 - **Distributional recall varies 0.33 → 1.00 across domains** at ε=∞. In
   healthcare the injected feature shift lands on a comparatively weak feature, so
   only strong shifts clear the divergence threshold without DP noise; government's
@@ -67,12 +80,33 @@ Quoted from `metrics_summary.csv` (ε=inf rows) and shown in
 
 ---
 
-## Finding 2 — Detection is *not* withholding (the governance nuance)
+## Finding 2 — THE SPINE: composite readiness scoring detects far more than it withholds
 
-**`paper/figures/fig2_detect_vs_withhold.png`.** A source can be *flagged* by a
-consensus check yet still be *kept* by the readiness decision, because a single
-consensus failure is one check among ~15 in `score_source`. Quoted from
-`metrics_summary.csv` (ε=inf, `withheld_frac_mean`):
+**`paper/figures/fig6_detection_action_gap.png`** and
+**`paper/figures/fig2_detect_vs_withhold.png`.** This is the paper's central
+finding, and it is robust because it appears two independent ways (across the
+cross-domain grid here, and in the single-domain "site at 30 % nulls still scores
+READY" observation from FedCheck — one phenomenon, not two loose ends).
+
+**Aggregated over all three domains at ε=∞** (`crossdomain_*.csv`,
+`det_recall` vs `degraded_withheld/2`):
+
+- the gate **detects 0.76** of degraded sources but **withholds only 0.42** — a
+  **0.34 gap**;
+- **74 of 180 degraded cells (41 %)** are *detected-but-not-withheld*;
+- the gap is **0.00 for structural** (schema-incompatible → hard EXCLUDE) but
+  **0.44–0.56 for completeness/distributional/label**.
+
+**Mechanism (not a mystery — it is the scoring rule, `src/gate/readiness.py`):**
+readiness = `0.4·check_pass_rate + 0.3·schema_score + 0.3·divergence_score`, with
+READY at ≥ 0.8. A single failed check among ~15 moves `check_pass_rate` from 1.00
+to ~0.93, i.e. the composite score from ~0.97 to ~0.94 — still READY. **A severe
+single-dimension defect is averaged away by a composite score.** This is a general
+property of weighted-mean readiness/data-quality scores, stated here as a
+measurable result with the two metrics (detection rate, gate-action rate) reported
+separately everywhere.
+
+Per-mode detail (`metrics_summary.csv`, ε=inf, `withheld_frac_mean`):
 
 | Mode | Detected (recall) | Actually withheld (frac) |
 |---|---|---|
@@ -139,24 +173,39 @@ across the two rare-label domains** (healthcare, government both 0.67) — it is
 
 ---
 
-## Finding 5 — Gating barely moves the downstream model (an honest negative)
+## Finding 5 — The downstream-accuracy arm is UNDERPOWERED (uninformative, not a negative)
 
 **`paper/figures/fig5_downstream.png`**, `auc_delta` at ε=∞ from
-`crossdomain_*.csv`:
+`crossdomain_*.csv`. An earlier draft read the flat `auc_delta` as "the gate is
+governance-only." That reading is **not licensed by this experiment**, and we
+retract it. The three-way check that decides the question
+(clean → corrupted-ungated → corrupted-gated; `auc_nogate` on `mode=none` vs on a
+corrupted mode vs `auc_gate`) shows the corruption **never degraded the model in
+the first place**:
 
-- **|ΔAUC| < 0.005 in every single cell.** The largest is healthcare/distributional
-  at **+0.0049**; finance/structural is **−0.0002**; most are exactly 0.000
-  (`metrics_summary.csv`, `auc_delta_mean`).
-- Clean-baseline AUC is healthy (healthcare 0.855, finance 0.669, government 0.928;
-  `mode=none`, `auc_nogate`), so the models train fine — gating just doesn't change
-  them, because removing 2 of 6 sources leaves a similar training set and the clean
-  holdout is unaffected by the degradation.
+| Domain | clean AUC | worst corrupted-ungated AUC | max drop (clean→corrupt) |
+|---|---|---|---|
+| healthcare | 0.8553 | 0.8508 (distributional) | **0.0045** |
+| finance | 0.6694 | 0.6670 (distributional) | **0.0024** |
+| government | 0.9276 | 0.9276 | **0.0000** |
 
-**The claim this does NOT support:** "gating improves downstream accuracy." In this
-setup it does not. **The claim it DOES support:** the gate's value is *governance
-and withholding of unfit sources* (Findings 1–2, mapped to NIST MEASURE in
-`docs/NIST_MAPPING.md`), not a headline accuracy lift. Stating this plainly is more
-defensible than fishing for a metric that moved.
+Because clean ≈ corrupted-ungated in **every** cell, the downstream arm measures
+nothing about the gate: if removing the corruption doesn't move accuracy, neither
+can gating it out. Two design reasons, both fixable:
+
+1. **Source-level dilution.** Only 2 of 6 sources are corrupted, so ≥4 clean
+   sources dominate the pooled training set (`n_sources=6`, `n_degraded=2`).
+2. **Aggregate metric on a clean holdout.** Overall AUC on an undegraded 20%
+   holdout is the least sensitive thing we could measure; representation/label
+   damage shows up in **worst-group** accuracy and **calibration**, not the mean.
+
+**Correct conclusion:** *no conclusion about downstream impact is available from
+this arm.* The gate's demonstrated value is **detection and (partial) withholding**
+mapped to NIST MEASURE (Findings 1–2, 6; `docs/NIST_MAPPING.md`) — an
+assurance/governance contribution — but we must not dress up an underpowered null
+as evidence for it. Redesigning this arm (undiluted / corrupted-only model +
+subgroup metrics + a severity×dilution sweep with an oracle ceiling) is the
+top-ranked next experiment in `docs/NEXT_EXPERIMENTS.md`.
 
 ---
 
@@ -181,25 +230,40 @@ defensible than fishing for a metric that moved.
   (structural) means the check behaves identically everywhere; large σ (label,
   distributional) means "your mileage varies by domain."
 - **Fig 5 — downstream effect.** Change in model AUC (×10⁻³) from turning the gate
-  on. Bars hug zero on purpose: this is the negative result that gating is a
-  data-governance control here, not an accuracy booster.
+  on. Bars hug zero — but read Finding 5: they hug zero because the corruption never
+  moved the model (underpowered arm), *not* because gating is proven harmless.
+- **Fig 6 — the spine.** For each failure mode (and the overall mean), the blue bar
+  is how often a bad source is *detected* and the orange bar how often it is
+  *withheld*; the red arrow is the gap. Everything except structural has a large
+  gap — the gate sees the problem but its composite score lets the source through.
 
 ---
 
 ## Summary for the paper
 
-1. **Catches and transfers:** structural (perfectly) and completeness (well) —
-   these are the gate's dependable, domain-agnostic guarantees.
-2. **Catches but domain-dependent:** distributional — reported as an ε sweep with a
-   usable knee at ε ≥ 0.5; needs per-domain threshold calibration.
-3. **Misses:** subtle label noise on **balanced-label** tasks (finance) — a stated
-   limitation of the marginal label-rate detector.
-4. **Detection ≠ withholding:** only structural/completeness reliably change the
-   READY/EXCLUDE decision; distributional/label are flagged but usually kept.
-5. **No downstream accuracy lift** in this setup — the contribution is governance
-   (MEASURE mapping in `docs/NIST_MAPPING.md`), not model performance.
+The honest framing is a **detectability-boundary study**, not "we built a gate and
+it works": *what pre-training data validation provably can catch, what it provably
+cannot, and why "flagged" and "blocked" diverge.*
 
-All five are quoted from the CSVs named above and are reproducible via
-`experiments/analyze.py`. Known limitations and calibration caveats are cross-listed
-in [`docs/WALKTHROUGH.md`](WALKTHROUGH.md) and
+1. **Spine — detection ≠ action:** the gate detects 0.76 of degraded sources but
+   withholds 0.42 (0.34 gap; 41 % of cells detected-but-kept), because a composite
+   readiness score averages away single-dimension defects. Reported as two separate
+   metrics everywhere (Finding 2, fig6).
+2. **Catches and transfers:** structural (perfectly, σ=0.00 across domains) and
+   completeness (well) — the dependable, domain-agnostic guarantees.
+3. **Catches but domain-dependent:** distributional — an ε sweep with a usable knee
+   at ε ≥ 0.5; needs per-domain threshold calibration (does not transfer cold).
+4. **Provably misses:** symmetric label noise on **balanced** targets — a derived
+   result (`p'=p+r(1−2p)→0` as `p→0.5`), not a strawman graph (Finding 1).
+5. **DP-noise ↔ false-positive tradeoff:** validating on differentially-private
+   summaries trades precision for recall as ε falls — the most technically original
+   piece; reported as FPR/FNR-vs-ε with a stated usable range (Finding 3).
+6. **Downstream arm underpowered:** the flat `auc_delta` is uninformative (clean ≈
+   corrupted-ungated), not evidence of a governance-only role (Finding 5). Redesign
+   pending — see `docs/NEXT_EXPERIMENTS.md`.
+
+All are quoted from the CSVs named above and reproducible via
+`experiments/analyze.py`. Open items and the ranked plan to close them are in
+[`docs/NEXT_EXPERIMENTS.md`](NEXT_EXPERIMENTS.md); limitations are cross-listed in
+[`docs/WALKTHROUGH.md`](WALKTHROUGH.md) and
 [`verification/VERIFICATION.md`](../verification/VERIFICATION.md).

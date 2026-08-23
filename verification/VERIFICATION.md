@@ -136,3 +136,27 @@ per-domain CSVs. Headline results confirmed against the CSVs:
   divergence does not transfer cleanly);
 - `|auc_delta| < 0.005` in every cell (gating is governance, not an accuracy lift);
 - `clean_excluded` max = 0 across all three CSVs (no clean source ever excluded).
+
+### V8 — reviewer blockers checked against the CSVs (2026-08-23)
+Diagnoses from an external review were **verified against the committed grids**
+before acting (not accepted on assertion). Findings, all reproducible from
+`crossdomain_*.csv`:
+- **B1 (downstream null is uninformative): CONFIRMED.** Three-way AUC at ε=∞ shows
+  clean ≈ corrupted-ungated in every cell (max drop 0.0045 healthcare/distributional,
+  0.0000 government). Corruption never dented the model (2-of-6 source dilution +
+  aggregate metric), so the arm measures nothing about the gate. The prior
+  "governance-only" reading in FINDINGS.md was retracted.
+- **B2 (finance label-miss is arithmetic): CONFIRMED.** `label_noise` is a symmetric
+  flip; `p'=p+r(1−2p)` → shift vanishes as p→0.5 (finance `adverse`≈0.42). Recall 0.00
+  at every ε (`crossdomain_finance.csv`). Now stated with the derivation, not just a graph.
+- **B3 (no reliability method): PARTLY REFUTED.** `experiments/code_agreement.py`
+  already implements a seeded 30-incident κ pipeline (mode + detectability) with a
+  machine 2nd annotator; only the human labels file is unrun (template exists).
+- **Spine (composite masking): CONFIRMED & strong.** Detection 0.756 vs action 0.417
+  (0.34 gap); 74/180 degraded cells (41 %) detected-but-not-withheld; gap 0.00 for
+  structural only. Mechanism = weighted-mean score in `src/gate/readiness.py`
+  (one failed check of ~15 → pass-rate 1.00→0.93 → still ≥0.8 READY).
+- **NIST granularity: ALREADY SATISFIED.** Mapping is at MEASURE subcategory level;
+  full RMF = 72 subcategories, this maps only MEASURE (21) by design.
+New: `paper/figures/fig6_detection_action_gap.{pdf,png}` (the spine),
+`docs/NEXT_EXPERIMENTS.md` (ranked plan to close B1/B2 and strengthen the rest).
