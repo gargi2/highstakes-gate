@@ -1,0 +1,31 @@
+incident_id,title,mode,detectability,confidence
+13,High-Toxicity Assessed on Text Involving Women and Minority Groups,label,partial,high
+22,Waze Navigates Motorists into Wildfires,structural_schema,yes,high
+36,Picture of Woman on Side of Bus Shamed for Jaywalking,label,partial,high
+37,Amazon’s Experimental Hiring Tool Allegedly Displayed Gender Bias in Candidate Rankings,distributional,partial,high
+74,Detroit Police Wrongfully Arrested Black Man Due To Faulty FRT,distributional,partial,high
+82,#LekkiMassacre: Why Facebook labelled content from October 20 incident ‘false’,label,partial,high
+103,Twitter’s Image Cropping Tool Allegedly Showed Gender and Racial Bias,distributional,partial,high
+146,"Research Prototype AI, Delphi, Reportedly Gave Racially Biased Answers on Ethics",distributional,partial,high
+149,Zillow Shut Down Zillow Offers Division Allegedly Due to Predictive Pricing Tool's Insuff…,distributional,partial,high
+150,"Swedish Contraceptive App, Natural Cycles, Allegedly Failed to Correctly Map Menstrual Cy…",distributional,partial,high
+154,Justice Department’s Recidivism Risk Algorithm PATTERN Allegedly Caused Persistent Dispar…,distributional,partial,high
+166,"Networking Platform Giggle Employs AI to Determine Users’ Gender, Allegedly Excluding Tra…",completeness,yes,high
+188,Argentinian City Government Deployed Teenage-Pregnancy Predictive Algorithm Using Invasiv…,label,partial,high
+199,Ever AI Reportedly Deceived Customers about FRT Use in App,provenance_documentation,partial,high
+226,Waze Allegedly Clogged Streets and Directed Drivers to Make Unsafe Traffic Decisions,completeness,yes,high
+234,"Waze Allegedly Frequently Routed Drivers through the Town of Los Gatos, Blocking Its Sing…",completeness,yes,high
+244,Colorado Police’s Automated License Plate Reader (ALPR) Matched a Family’s Minivan’s Plat…,structural_schema,yes,high
+254,Google’s Face Grouping Allegedly Collected and Analyzed Users’ Facial Structure without C…,provenance_documentation,partial,high
+265,Black Uber Eats Driver Allegedly Subjected to Excessive Photo Checks and Dismissed via FR…,completeness,yes,high
+274,Virginia Courts’ Algorithmic Recidivism Risk Assessment Failed to Lower Incarceration Rat…,distributional,partial,high
+416,Facebook's Job Ad Algorithm Allegedly Biased against Older and Female Workers,distributional,partial,low
+452,"ChatGPT-Written Bug Reports Deemed ""Nonsense"" by White Hat Platform, Prompted Bans",distributional,partial,high
+582,Racial Bias in Lung Function Diagnostic Algorithm Leads to Underdiagnosis in Black Men,distributional,partial,low
+584,Illinois Residents File Class Action Lawsuit Against Facial Recognition Technology Compan…,provenance_documentation,partial,med
+636,AI Romance Apps Reportedly Compromise User Privacy for Data Harvesting,provenance_documentation,partial,high
+687,Deepfake Porn Sites Use Breeze Liu's Image Without Consent,provenance_documentation,partial,med
+781,Clearview AI Reportedly Faces $33.7 Million Fine for Violating GDPR with Biometric Data H…,provenance_documentation,partial,med
+882,AI-Generated Reading Summaries on Fable App Reportedly Wrote Biased and Offensive Comment…,distributional,partial,low
+1000,Sora Video Generator Has Reportedly Been Creating Biased Human Representations Across Rac…,distributional,partial,low
+1043,Reddit Moderators Report Unauthorized AI Study Involving Fabricated Identities by Purport…,distributional,partial,low

@@ -22,6 +22,9 @@ htmlcov/
 # --- Experiment artifacts (results CSVs are committed; scratch is not) ---
 experiments/results/*.tmp
 experiments/results/_scratch/
+experiments/results/*.TEMPLATE.csv
+# human labels are filled by the reviewer, not committed by the assistant
+experiments/results/taxonomy_sample_human_labels.csv
 
 # --- Paper build ---
 paper/*.aux
