@@ -1,0 +1,39 @@
+# --- Data (never commit; see CLAUDE.md "Local data paths") ---
+data/
+!data/.gitkeep
+
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# --- Test / tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Experiment artifacts (results CSVs are committed; scratch is not) ---
+experiments/results/*.tmp
+experiments/results/_scratch/
+
+# --- Paper build ---
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.pdf
+paper/*.synctex.gz
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

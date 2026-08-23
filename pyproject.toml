@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "highstakes-gate"
+version = "0.1.0"
+description = "Pre-training data-readiness validation gate for high-stakes AI systems"
+authors = [{ name = "Gargi Desai" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26,<3",
+    "pandas>=2.1,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "matplotlib>=3.7,<4",
+    "diffprivlib>=0.6",  # reference implementation for DP cross-checks only
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+# src-layout: make `gate` importable without an editable install.
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
