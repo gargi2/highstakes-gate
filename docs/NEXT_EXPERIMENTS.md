@@ -50,21 +50,32 @@ is deferred until the real CSVs exist, to avoid plotting synthetic smoke.)
 item 2; `run_downstream.py` already accepts `--n-degraded` and `--severities` to
 drive it.
 
-## 2. 🔴 Severity × dilution sweep + oracle ceiling
+## 2. 🟡 Severity × dilution sweep + oracle ceiling — PARTLY DONE
 **Also Blocker 1; turns single points into severity–detectability curves.**
 
-- Sweep `--n-degraded` ∈ {1,2,3} (keep <50 % for consensus) and reuse the existing
-  `severities` {low,med,high} — the grid *already* varies severity, so plot
-  detection/withholding/subgroup-harm **vs severity** per mode per domain.
-- Add an **oracle** condition: an omniscient gate that excludes exactly the degraded
-  sources, to bound the best achievable downstream number (the ceiling the real gate
-  is measured against).
-
-Command shape (human runs):
+- **Severity curve: DONE.** `run_downstream.py` already varies `--severities`
+  {low,med,high}; `analyze_downstream.py` plots ECE-vs-severity (`figD3`). Result:
+  label calibration harm scales monotonically (healthcare ECE 0.147→0.287→0.431),
+  all other modes flat. (`docs/FINDINGS.md` Finding 7d.)
+- **Oracle ceiling: DONE.** The `clean_only` condition *is* the omniscient gate
+  (excludes exactly the degraded sources); `gate_realistic` is measured against it
+  (`figD2`). Government structural recovers to the oracle; label does not.
+- **Dilution sweep: PENDING (the one remaining piece).** `run_downstream.py` now
+  emits an `n_degraded` column, so sweeping it and concatenating just works;
+  `analyze_downstream.py` auto-draws `figD4` once >1 level is present. Human runs:
 ```bash
-.venv/Scripts/python.exe experiments/run_crossdomain.py --seeds 5 \
-  --n-degraded 1 --data-root ... ; # repeat for 2, 3
+# repeat for --n-degraded 1 and 3 (keep <50% of n_sources=6 for consensus),
+# writing to distinct dirs, then concatenate the CSVs before analyze_downstream.
+.venv/Scripts/python.exe experiments/run_downstream.py --seeds 5 --max-rows 40000 \
+  --n-degraded 1 --out-dir experiments/results/dilution_nd1 \
+  --data-root healthcare=data/healthcare --data-root finance=data \
+  --data-root government=data/PGYR2025_P06302026_06032026
 ```
+  Run all three levels (1, 2, 3) into `dilution_nd{1,2,3}/` with the current code so
+  every file carries the `n_degraded` column, then point `analyze_downstream` at the
+  concatenation. (The committed `downstream_*.csv` — used for figD1–D3 — predates the
+  column and is n_degraded=2; keep it for the item-1 figures, don't mix it into the
+  dilution concat.)
 
 ## 3. 🟡 Asymmetric label noise + a detector that can see symmetric noise
 **Closes Blocker 2 (verified arithmetic: `p'=p+r(1−2p)→0` as `p→0.5`).**

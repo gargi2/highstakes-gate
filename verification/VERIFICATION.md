@@ -178,3 +178,20 @@ worst-group accuracy by 0.49 (healthcare) / 0.43 (government) and raises ECE fro
 confirming the redesigned arm sees what the old one missed. `gate_realistic`
 withholds structural (n_train 6→4) but not label (stays 6), matching the spine.
 Real-data grid pending (human runs the command in NEXT_EXPERIMENTS §1).
+
+### V10 — downstream arm: real-data results (items 1–2) — 2026-08-23
+Human ran the full real-data grid (`git=43759f7`, 5 seeds × 3 severities, all three
+domains). CSVs: `experiments/results/downstream_{healthcare,finance,government}.csv`.
+Analyzed by `experiments/analyze_downstream.py` → `downstream_summary.csv`,
+`paper/figures/figD1/D2/D3`. Numbers quoted from `downstream_summary.csv`:
+- **Blocker 1 RESOLVED.** Label corruption raises ECE 9× healthcare (0.032→0.288) and
+  6× government (0.046→0.288) **while AUC is unchanged** (government 0.928→0.927) —
+  the harm the aggregate-AUC arm was blind to. Worst-group accuracy mostly flat on
+  real data (corrects the synthetic-smoke expectation).
+- **Spine confirmed downstream.** `gate_realistic` ≈ `all_ungated` for label (not
+  withheld → residual ECE 0.105/0.120), but recovers worst-group accuracy to the
+  oracle for government structural (gate 0.911 = clean_only, vs 0.905 ungated).
+- **Item 2 severity DONE:** label ECE scales low→med→high (healthcare 0.147/0.287/0.431);
+  other modes flat. **Dilution sweep PENDING** (`--n-degraded` 1/3; `figD4` auto-draws).
+Tests: 38 passed (`test_downstream.py`). Finance is the weak domain (AUC~0.67,
+worst-group~0.50, balanced label mutes calibration harm) — reported, not hidden.

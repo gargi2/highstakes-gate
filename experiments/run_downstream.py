@@ -52,8 +52,8 @@ from domains.metrics import evaluate_downstream, DownstreamMetrics      # noqa: 
 
 COLUMNS = [
     "domain", "mode", "severity", "epsilon", "seed", "provenance", "condition",
-    "n_train_sources", "auc", "acc", "worst_group_acc", "subgroup_fnr_gap", "ece",
-    "n_groups_used",
+    "n_sources", "n_degraded", "n_train_sources", "auc", "acc", "worst_group_acc",
+    "subgroup_fnr_gap", "ece", "n_groups_used",
 ]
 _FRAME_CACHE: dict[str, tuple[pd.DataFrame, str]] = {}
 
@@ -135,7 +135,8 @@ def run_cell(domain, mode, severity, epsilon, seed, cfg) -> list[dict]:
         rows.append({
             "domain": domain.name, "mode": mode, "severity": severity,
             "epsilon": _eps_str(epsilon), "seed": seed, "provenance": prov,
-            "condition": cond, "n_train_sources": len(fr),
+            "condition": cond, "n_sources": cfg["n_sources"],
+            "n_degraded": len(degraded_idx), "n_train_sources": len(fr),
             "auc": _r(m.auc), "acc": _r(m.acc), "worst_group_acc": _r(m.worst_group_acc),
             "subgroup_fnr_gap": _r(m.subgroup_fnr_gap), "ece": _r(m.ece),
             "n_groups_used": m.n_groups_used,

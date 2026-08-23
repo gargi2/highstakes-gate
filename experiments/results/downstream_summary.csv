@@ -1,0 +1,53 @@
+# Pillar C downstream summary — aggregated from experiments/results/downstream_*.csv
+# Reproduce: .venv/Scripts/python.exe experiments/analyze_downstream.py (seed=42, git=43759f7)
+# one row per (domain, mode, condition); means over seeds x severities
+# conditions: clean_only=oracle ceiling, all_ungated=diluted, corrupt_only=undiluted, gate_realistic=gate kept
+domain,mode,condition,n,auc,acc,worst_group_acc,subgroup_fnr_gap,ece
+finance,completeness,all_ungated,15,0.6694,0.6068,0.5049,0.6531,0.0668
+finance,completeness,clean_only,15,0.669,0.6065,0.502,0.6554,0.0661
+finance,completeness,corrupt_only,15,0.6691,0.6093,0.5037,0.6722,0.067
+finance,completeness,gate_realistic,15,0.6694,0.6068,0.5049,0.6531,0.0668
+finance,distributional,all_ungated,15,0.667,0.6051,0.5037,0.5948,0.068
+finance,distributional,clean_only,15,0.669,0.6065,0.502,0.6554,0.0661
+finance,distributional,corrupt_only,15,0.6696,0.6096,0.5031,0.6626,0.0654
+finance,distributional,gate_realistic,15,0.667,0.6051,0.5037,0.5948,0.068
+finance,label,all_ungated,15,0.6693,0.606,0.5028,0.6577,0.0741
+finance,label,clean_only,15,0.669,0.6065,0.502,0.6554,0.0661
+finance,label,corrupt_only,15,0.663,0.6126,0.5072,0.6392,0.0768
+finance,label,gate_realistic,15,0.6693,0.606,0.5028,0.6577,0.0741
+finance,structural,all_ungated,15,0.6692,0.6075,0.5056,0.6157,0.0673
+finance,structural,clean_only,15,0.669,0.6065,0.502,0.6554,0.0661
+finance,structural,corrupt_only,15,0.6674,0.6072,0.5009,0.5433,0.0656
+finance,structural,gate_realistic,15,0.669,0.6065,0.502,0.6554,0.0661
+government,completeness,all_ungated,15,0.9276,0.9718,0.9097,0.0078,0.0478
+government,completeness,clean_only,15,0.9276,0.972,0.9109,0.008,0.0458
+government,completeness,corrupt_only,15,0.9276,0.9717,0.9095,0.0088,0.051
+government,completeness,gate_realistic,15,0.9276,0.9718,0.9097,0.0078,0.0478
+government,distributional,all_ungated,15,0.9277,0.9719,0.9103,0.0077,0.0478
+government,distributional,clean_only,15,0.9276,0.972,0.9109,0.008,0.0458
+government,distributional,corrupt_only,15,0.9276,0.9718,0.9101,0.0088,0.046
+government,distributional,gate_realistic,15,0.9277,0.9719,0.9103,0.0077,0.0478
+government,label,all_ungated,15,0.9276,0.9698,0.9019,0.0054,0.1203
+government,label,clean_only,15,0.9276,0.972,0.9109,0.008,0.0458
+government,label,corrupt_only,15,0.9271,0.9641,0.8792,0.0037,0.2885
+government,label,gate_realistic,15,0.9276,0.9698,0.9019,0.0054,0.1203
+government,structural,all_ungated,15,0.9276,0.9706,0.9048,0.007,0.0495
+government,structural,clean_only,15,0.9276,0.972,0.9109,0.008,0.0458
+government,structural,corrupt_only,15,0.8714,0.9574,0.8526,0.0052,0.0371
+government,structural,gate_realistic,15,0.9276,0.972,0.9109,0.008,0.0458
+healthcare,completeness,all_ungated,15,0.855,0.9784,0.9545,0.0,0.032
+healthcare,completeness,clean_only,15,0.8557,0.9784,0.9545,0.0,0.0324
+healthcare,completeness,corrupt_only,15,0.8509,0.9784,0.9545,0.0,0.0311
+healthcare,completeness,gate_realistic,15,0.8557,0.9784,0.9545,0.0,0.0324
+healthcare,distributional,all_ungated,15,0.8508,0.9784,0.9545,0.0,0.0315
+healthcare,distributional,clean_only,15,0.8557,0.9784,0.9545,0.0,0.0324
+healthcare,distributional,corrupt_only,15,0.8535,0.9784,0.9545,0.0,0.0311
+healthcare,distributional,gate_realistic,15,0.8557,0.9784,0.9545,0.0,0.0324
+healthcare,label,all_ungated,15,0.854,0.9785,0.9545,0.0,0.1048
+healthcare,label,clean_only,15,0.8557,0.9784,0.9545,0.0,0.0324
+healthcare,label,corrupt_only,15,0.7278,0.978,0.9544,0.0094,0.2883
+healthcare,label,gate_realistic,15,0.854,0.9785,0.9545,0.0,0.1048
+healthcare,structural,all_ungated,15,0.8547,0.9784,0.9545,0.0,0.0317
+healthcare,structural,clean_only,15,0.8557,0.9784,0.9545,0.0,0.0324
+healthcare,structural,corrupt_only,15,0.8455,0.9784,0.9545,0.0,0.0309
+healthcare,structural,gate_realistic,15,0.8557,0.9784,0.9545,0.0,0.0324

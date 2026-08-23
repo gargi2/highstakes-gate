@@ -199,13 +199,58 @@ can gating it out. Two design reasons, both fixable:
    holdout is the least sensitive thing we could measure; representation/label
    damage shows up in **worst-group** accuracy and **calibration**, not the mean.
 
-**Correct conclusion:** *no conclusion about downstream impact is available from
-this arm.* The gate's demonstrated value is **detection and (partial) withholding**
-mapped to NIST MEASURE (Findings 1–2, 6; `docs/NIST_MAPPING.md`) — an
-assurance/governance contribution — but we must not dress up an underpowered null
-as evidence for it. Redesigning this arm (undiluted / corrupted-only model +
-subgroup metrics + a severity×dilution sweep with an oracle ceiling) is the
-top-ranked next experiment in `docs/NEXT_EXPERIMENTS.md`.
+**This arm was redesigned (item 1) and now yields a real result — see Finding 7.**
+The aggregate-AUC-only arm is superseded; keep this section only as the record of
+why aggregate AUC on a clean holdout was the wrong instrument.
+
+## Finding 7 — Redesigned downstream arm: label noise wrecks CALIBRATION, and the gate does not recover it
+
+Source: `experiments/results/downstream_{healthcare,finance,government}.csv`
+(real data, 5 seeds × 3 severities, `git=43759f7`), summarized in
+`downstream_summary.csv`; figures **figD1/figD2/figD3**. Produced by
+`experiments/run_downstream.py` + `experiments/analyze_downstream.py`. Four training
+conditions per cell: `clean_only` (= **oracle** ceiling), `all_ungated` (diluted),
+`corrupt_only` (**undiluted**), `gate_realistic` (what the gate kept); metrics on the
+clean holdout are AUC, accuracy, **worst-group accuracy**, **subgroup FNR gap**, and
+**expected calibration error (ECE)**.
+
+**(a) The sensitive metric is calibration (ECE), and it exposes harm AUC hides.**
+Under undiluted label corruption:
+
+| Domain | ECE clean→corrupt | AUC clean→corrupt | worst-group acc clean→corrupt |
+|---|---|---|---|
+| healthcare | 0.032 → **0.288** (9×) | 0.856 → 0.728 | 0.955 → 0.955 |
+| government | 0.046 → **0.288** (6×) | 0.928 → **0.927** | 0.911 → 0.879 |
+| finance | 0.066 → 0.077 | 0.669 → 0.663 | 0.502 → 0.502 |
+
+The **government** row is the headline: label noise leaves AUC essentially unchanged
+(0.928→0.927) while calibration collapses 6× — exactly the failure the old arm was
+blind to. **Worst-group accuracy is mostly flat on real data** (an honest correction
+to the synthetic smoke, where it moved); ECE is the metric that carries the signal.
+
+**(b) The gate does not recover label harm — the spine, confirmed downstream.**
+For label, `gate_realistic` ≈ `all_ungated` (the gate keeps the label-corrupted
+sources, Finding 2), so residual ECE stays high (healthcare 0.105, government 0.120,
+vs clean 0.03–0.05) and worst-group accuracy stays at the ungated value
+(government 0.902 < oracle 0.911). A miscalibrated model ships.
+
+**(c) The gate DOES recover structural harm to the oracle ceiling.** Government
+structural: undiluted corruption drops worst-group accuracy 0.911→0.853 and AUC
+0.928→0.871, and the realistic gate **recovers worst-group accuracy to 0.911 = the
+oracle** (vs 0.905 ungated). This is the clearest positive: where the gate withholds
+(structural), it recovers the downstream metric to the best achievable.
+
+**(d) Item 2 — harm scales monotonically with severity (figD3).** ECE of the
+undiluted label model climbs low→med→high: healthcare 0.147 → 0.287 → 0.431,
+government similar; all other modes stay on the clean baseline. The single-point arm
+could not show this curve. **Still pending:** the dilution sweep (`--n-degraded`
+∈ {1,2,3}) to trace harm vs number of degraded sources — command in
+`docs/NEXT_EXPERIMENTS.md` §1–2; `figD4` activates automatically once those runs exist.
+
+**Net:** Blocker 1 is resolved. The downstream story is now a real, honest result —
+*label noise is a calibration failure invisible to AUC; the gate recovers the
+degradations it withholds (structural) and fails to recover those it only flags
+(label)* — not an uninformative null.
 
 ---
 
@@ -236,6 +281,16 @@ top-ranked next experiment in `docs/NEXT_EXPERIMENTS.md`.
   is how often a bad source is *detected* and the orange bar how often it is
   *withheld*; the red arrow is the gap. Everything except structural has a large
   gap — the gate sees the problem but its composite score lets the source through.
+- **Fig D1 — downstream calibration harm (item 1).** Per domain, red = how much
+  *undiluted* corruption worsens calibration (ECE) vs clean; blue = residual harm in
+  the realistic gated pipeline. Only label has tall bars, and its blue bar stays up —
+  the gate keeps the label sources, so a miscalibrated model ships.
+- **Fig D2 — worst-group-accuracy recovery (item 1).** Three bars per mode: ungated,
+  gate-kept, oracle (clean-only). When the gate bar reaches the black oracle bar it
+  fully recovered — government structural is the clear case; label does not recover.
+- **Fig D3 — severity curve (item 2).** ECE of the undiluted model vs corruption
+  severity. The label line climbs low→med→high; every other mode hugs the clean
+  baseline. This is the harm-vs-severity curve the single-point arm couldn't produce.
 
 ---
 
@@ -258,9 +313,12 @@ cannot, and why "flagged" and "blocked" diverge.*
 5. **DP-noise ↔ false-positive tradeoff:** validating on differentially-private
    summaries trades precision for recall as ε falls — the most technically original
    piece; reported as FPR/FNR-vs-ε with a stated usable range (Finding 3).
-6. **Downstream arm underpowered:** the flat `auc_delta` is uninformative (clean ≈
-   corrupted-ungated), not evidence of a governance-only role (Finding 5). Redesign
-   pending — see `docs/NEXT_EXPERIMENTS.md`.
+6. **Downstream (redesigned, item 1):** aggregate AUC was the wrong instrument
+   (Finding 5). With subgroup/calibration metrics, **label noise is a calibration
+   failure invisible to AUC** (government ECE 0.046→0.288 at AUC 0.928→0.927), it
+   **scales with severity**, and the gate **recovers the modes it withholds
+   (structural → oracle) but not those it only flags (label)** (Finding 7,
+   figD1–D3). The dilution sweep is the remaining piece.
 
 All are quoted from the CSVs named above and reproducible via
 `experiments/analyze.py`. Open items and the ranked plan to close them are in
