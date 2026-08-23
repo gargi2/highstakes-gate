@@ -71,7 +71,8 @@ Quoted from `metrics_summary.csv` (ε=inf rows) and shown in
   `docs/NEXT_EXPERIMENTS.md`: (i) test **asymmetric** noise, where `p'` *does*
   move, to turn the binary miss into a detectability-threshold curve; (ii) add a
   detector with a mechanism to see symmetric noise (confident-learning /
-  cross-validated disagreement) so we report a fix, not just a hole.
+  cross-validated disagreement) so we report a fix, not just a hole. **Both are now
+  built and the fix works — see Finding 8.**
 - **Distributional recall varies 0.33 → 1.00 across domains** at ε=∞. In
   healthcare the injected feature shift lands on a comparatively weak feature, so
   only strong shifts clear the divergence threshold without DP noise; government's
@@ -255,6 +256,41 @@ degradations it withholds (structural) and fails to recover those it only flags
 (label)* — not an uninformative null.
 
 ---
+
+## Finding 8 — A confident-learning detector closes the label blind spot (Blocker 2 fixed)
+
+Source: `experiments/run_label_detector.py` + `src/domains/label_quality.py`
+(extension — the frozen gate is untouched), analyzed by
+`experiments/analyze_label_detector.py` → `label_detector_summary.csv`, figures
+**figL1/figL2**. The new detector is a per-source **cross-validated
+self-disagreement rate** (out-of-fold predicted class ≠ given label): a rows-free
+scalar, DP-noisable like the gate's other released statistics, so it fits the
+private/federated architecture. A flipped source keeps disagreeing with its own
+labels even when its positive-rate marginal does not move — so it is visible where
+the marginal detector is blind.
+
+**(a) Symmetric noise (the blind spot) — closed.** Self-disagreement separates clean
+from 45 %-flipped sources in every domain, including balanced finance: clean 0.390
+(±0.003 at ~6.7k rows/source) vs noisy 0.489 — a +0.10 gap the marginal cannot see.
+Smoke recall (marginal → confident): **finance 0.00 → 0.67, healthcare 0.75 → 1.00,
+government 0.75 → 1.00** (real-data numbers pending the human run; figL1). The
+consensus threshold (`0.05`) is calibrated on **clean** sources — like
+`divergence_threshold`, not on the detection outcome (no leakage).
+
+**(b) Asymmetric noise — the marginal regains signal (derivation confirmed).** With
+positives→negatives flips the marginal moves (`p' = p − p·rate`), so the gate's own
+label-rate detector recovers recall as the flip rate grows (finance symmetric 0.00 →
+asymmetric ~0.13 on smoke; figL2). This turns the binary miss into a
+detectability-threshold curve and validates the Finding-1 derivation empirically.
+
+**Honest caveats:** finance's high base error (AUC ~0.67) makes its clean/noisy gap
+the smallest, so its confident-learning recall is the lowest of the three and the
+most threshold-sensitive; asymmetric-noise detection on rare-label domains
+(healthcare base 0.06) is weak for *both* detectors, because flipping the few
+positives barely changes anything. A rigorous DP analysis of a CV-derived statistic
+is future work (the module ships an approximate `epsilon` option, flagged as such).
+**Run for the paper:** the human runs `run_label_detector.py` on real data (command
+in `docs/NEXT_EXPERIMENTS.md` §3); `analyze_label_detector.py` then draws figL1/L2.
 
 ## Reading the figures (for someone new to the area)
 

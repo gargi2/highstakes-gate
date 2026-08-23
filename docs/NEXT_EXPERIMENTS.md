@@ -79,18 +79,37 @@ drive it.
   column and is n_degraded=2; keep it for the item-1 figures, don't mix it into the
   dilution concat.)
 
-## 3. 🟡 Asymmetric label noise + a detector that can see symmetric noise
-**Closes Blocker 2 (verified arithmetic: `p'=p+r(1−2p)→0` as `p→0.5`).**
+## 3. ✅ IMPLEMENTED — Asymmetric label noise + a confident-learning detector
+**Closes Blocker 2 (verified arithmetic: `p'=p+r(1−2p)→0` as `p→0.5`).** Built as an
+extension; the frozen gate is untouched:
 
-- In `src/domains/degradations.py`, add an **asymmetric** label mode (flip only
-  positives→negatives, or a class-conditional rate). Marginals *do* move → the
-  existing label-rate detector should produce a **detectability-threshold curve**
-  vs asymmetry, converting the finance "0.00" into a boundary result.
-- Add a **confident-learning / cross-validated-disagreement** detector (out-of-fold
-  model disagreement rate per source) as a new consensus check, so symmetric noise
-  on balanced targets becomes detectable. Report it beside the marginal detector —
-  "here is the hole *and* the fix."
-- Keep the derivation in `docs/FINDINGS.md` Finding 1 as the theoretical anchor.
+- `src/domains/degradations.py::degrade_labels_asymmetric` — class-conditional flip
+  (positives→negatives). Marginals move (`p'=p−p·rate`), so the gate's label-rate
+  detector regains recall as asymmetry grows (figL2) — the derivation, confirmed.
+- `src/domains/label_quality.py` — the confident-learning detector: per-source
+  cross-validated **self-disagreement rate** (rows-free scalar, DP-noisable via
+  `gate.privacy.laplace_noise`) + a one-sided consensus check
+  (`label_quality_checks`, threshold 0.05 calibrated on CLEAN sources).
+- `experiments/run_label_detector.py` + `experiments/analyze_label_detector.py`
+  (figL1/L2 + summary); `tests/test_label_quality.py` (7 tests).
+
+**Smoke evidence (synthetic; real run pending):** symmetric-noise recall marginal →
+confident: **finance 0.00 → 0.67, healthcare/government 0.75 → 1.00** — the blind
+spot closed, precision ~1.0. Self-disagreement clean vs 45 %-noisy: finance
+0.390±0.003 → 0.489.
+
+**The human runs the real grid** (per-source CV is heavier than the marginal detector,
+but the frame cache reads each extract once):
+```bash
+.venv/Scripts/python.exe experiments/run_label_detector.py --seeds 5 --max-rows 40000 \
+  --data-root healthcare=data/healthcare --data-root finance=data \
+  --data-root government=data/PGYR2025_P06302026_06032026
+.venv/Scripts/python.exe experiments/analyze_label_detector.py
+```
+**Still open:** (i) a rigorous DP analysis of the CV-derived disagreement statistic
+(module ships an approximate `epsilon` option, flagged); (ii) an ε-sweep of the
+confident detector for the privacy–utility story; (iii) per-domain threshold
+calibration on clean sources (finance is the sensitive one).
 
 ## 4. 🟡 Ablate the aggregation rule (the spine's "fix")
 **Directly tests the paper's spine (Finding 2 — the 0.34 detection–action gap).**

@@ -16,11 +16,36 @@ detection precision/recall.
 """
 from __future__ import annotations
 
+import numpy as np
+import pandas as pd
+
 from gate.consensus import DIVERGENCE_CHECK_ID, LABEL_RATE_CHECK_ID
 from gate.reports import CheckResult
 
 MODES = ["structural", "completeness", "distributional", "label"]
 SEVERITIES = ["low", "med", "high"]
+
+
+def degrade_labels_asymmetric(df: pd.DataFrame, column: str, rate_pos: float,
+                              rate_neg: float, seed: int) -> pd.DataFrame:
+    """Class-conditional (ASYMMETRIC) label flip — an item-3 extension.
+
+    Flips positives->0 at rate_pos and negatives->1 at rate_neg. Unlike the gate's
+    symmetric `label_noise` (which cannot move a balanced marginal), an asymmetric
+    flip shifts P(y=1) by `(1-p)*rate_neg - p*rate_pos`, so the marginal detector
+    regains a signal and we can trace a detectability-threshold curve. Applied
+    locally (the frozen gate.partition is untouched). Returns a copy.
+    """
+    out = df.copy()
+    rng = np.random.default_rng(seed)
+    y = pd.to_numeric(out[column], errors="coerce").to_numpy(dtype=float)
+    pos, neg = (y == 1), (y == 0)
+    flip_p = pos & (rng.random(len(out)) < rate_pos)
+    flip_n = neg & (rng.random(len(out)) < rate_neg)
+    y[flip_p] = 0.0
+    y[flip_n] = 1.0
+    out[column] = y.astype(int)
+    return out
 
 
 def build_spec(mode: str, severity: str, features: list[str], label: str) -> dict:

@@ -195,3 +195,27 @@ Analyzed by `experiments/analyze_downstream.py` → `downstream_summary.csv`,
   other modes flat. **Dilution sweep PENDING** (`--n-degraded` 1/3; `figD4` auto-draws).
 Tests: 38 passed (`test_downstream.py`). Finance is the weak domain (AUC~0.67,
 worst-group~0.50, balanced label mutes calibration harm) — reported, not hidden.
+
+### V11 — confident-learning label detector (item 3, Blocker 2 fix) — 2026-08-23
+New extension (frozen gate untouched): `src/domains/label_quality.py` (per-source
+cross-validated self-disagreement rate + one-sided consensus check),
+`degrade_labels_asymmetric` in `degradations.py`, `experiments/run_label_detector.py`,
+`experiments/analyze_label_detector.py`, `tests/test_label_quality.py`.
+```bash
+.venv/Scripts/python.exe experiments/run_label_detector.py --smoke
+.venv/Scripts/python.exe -m pytest tests/ -q      # 45 passed
+```
+Prototype + smoke (synthetic — sanity, not paper numbers):
+- Self-disagreement separates clean vs 45%-symmetric-noisy in ALL domains including
+  balanced finance: finance clean 0.390±0.003 → noisy 0.489 (gap +0.10) at ~6.7k
+  rows/source; the marginal detector cannot see this (Blocker 2).
+- Symmetric-noise recall marginal→confident: finance 0.00→0.67, healthcare 0.75→1.00,
+  government 0.75→1.00; precision ~1.0.
+- Asymmetric flips move the marginal (finance base 0.42 → 0.23 at rate 0.45), so the
+  gate's label-rate detector regains recall (derivation confirmed).
+- Threshold 0.05 calibrated on CLEAN sources (not on outcome — no leakage), matching
+  the `divergence_threshold` discipline. confidence_margin>0 backfires (symmetric noise
+  removes confident predictions) → plain disagreement is used.
+Honest caveats recorded: finance gap smallest (high base error); asymmetric detection
+on rare-label domains weak for both detectors; rigorous DP of a CV statistic is future
+work (approximate `epsilon` option flagged). Real-data grid pending (human).
