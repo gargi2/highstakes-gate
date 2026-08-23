@@ -98,3 +98,41 @@ Real-data findings recorded (not bugs):
 ### Pending (human runs; no assistant credits)
 Full grid + real extractions — see `--print-commands` and the commands below.
 Results land in `experiments/results/crossdomain_<domain>.csv`.
+
+---
+
+## Session 4 — Pillar C: NIST MEASURE mapping + analysis (2026-08-23)
+
+Deliverables: `docs/NIST_MAPPING.md`, `experiments/analyze.py`,
+`experiments/results/metrics_summary.csv`, `paper/figures/fig1…fig5`,
+`docs/FINDINGS.md`. Full grids (325 cells/domain, real data) consumed, not rerun.
+
+### V6 — NIST MEASURE subcategories verified against official source
+The MEASURE category/subcategory numbers and wording in `docs/NIST_MAPPING.md`
+were read directly from **NIST AI 100-1 (AI RMF 1.0), Table 3, pp. 29–31**,
+fetched as the official PDF from
+`https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf` (verified 2026-08-23) —
+not from memory (hard rule 2). MEASURE = 4 categories, 21 Core subcategories
+(1.1–1.3, 2.1–2.13, 3.1–3.3, 4.1–4.3). The placeholder subcategory numbers in
+`docs/PIVOT_SCOPE.md` §3 and the `TODO-VERIFY` rows in `docs/TAXONOMY.md` are
+superseded by `docs/NIST_MAPPING.md`. Note recorded: MEASURE 2.2 is deliberately
+NOT claimed for data completeness (2.2 is human-subject-evaluation-specific).
+
+### V7 — analysis reproducible from committed CSVs
+```bash
+.venv/Scripts/python.exe experiments/analyze.py
+```
+Reads `experiments/results/crossdomain_{healthcare,finance,government}.csv`
+(975 rows total; `git=ada8fc3`, `seed=42`), writes 5 figures (PDF+PNG) and
+`metrics_summary.csv` (60 rows). Deterministic — no experiment is rerun. Every
+number in `docs/FINDINGS.md` is quoted from `metrics_summary.csv` or the
+per-domain CSVs. Headline results confirmed against the CSVs:
+- structural detection recall/precision = 1.00, withheld = 1.00, **all domains**;
+- finance/label detection recall = **0.00 at every ε** (balanced-label blind spot);
+- distributional detection is precision-limited under DP (clean false-flag 0.0 at
+  ε≥1 in all domains; 1.00/1.00/0.63 at ε=0.1);
+- cross-domain recall spread σ: structural 0.00, completeness 0.19,
+  distributional 0.34, label 0.38 (label-rate transfers to rare-label domains,
+  divergence does not transfer cleanly);
+- `|auc_delta| < 0.005` in every cell (gating is governance, not an accuracy lift);
+- `clean_excluded` max = 0 across all three CSVs (no clean source ever excluded).

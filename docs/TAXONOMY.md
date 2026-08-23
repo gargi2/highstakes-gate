@@ -182,25 +182,30 @@ setting).
 *n* and detectability splits quoted from `taxonomy_coding.csv`; gate mechanisms
 quoted from `src/gate/` and `suites/clinical_v1.json`.
 
-## NIST AI RMF MEASURE cross-reference (first draft — refine in Session 4)
+## NIST AI RMF MEASURE cross-reference (VERIFIED — Session 4)
 
-Category-level only. **Subcategory numbers are `TODO-VERIFY` against the
-official NIST AI 100-1 text and MEASURE playbook** before any draft asserts
-them (project hard rule 2; see `docs/PIVOT_SCOPE.md` §3).
+Subcategory numbers are now **verified against NIST AI 100-1 (AI RMF 1.0),
+Table 3, pp. 29–31** and maintained canonically in
+[`docs/NIST_MAPPING.md`](NIST_MAPPING.md). The table below is the mode-level
+summary; see `NIST_MAPPING.md` for the verbatim NIST wording, the source URL,
+the gate-capability mapping, and the framing caveat (notably: MEASURE 2.2 is
+*not* claimed for completeness — it is human-subject-evaluation-specific).
 
-| Mode | MEASURE category | Governance claim | Status |
-|------|------------------|------------------|--------|
-| Structural / schema | MEASURE 2 (TEVV; validity) | data validity measured pre-deployment | subcat TODO-VERIFY |
-| Completeness | MEASURE 2 (representativeness) | coverage/representativeness assessed | subcat TODO-VERIFY |
-| Distributional | MEASURE 2 (bias / drift, ~2.11) | population skew detected before training | subcat TODO-VERIFY |
-| Label | MEASURE 2 (TEVV; data quality) | label integrity measured | subcat TODO-VERIFY |
-| Provenance / documentation | MEASURE 2 + GOVERN (data documentation) | lineage/consent documented | subcat TODO-VERIFY |
-| Cross-source incompatibility | MEASURE 2 (bias/validity across sources) | multi-site consistency measured | subcat TODO-VERIFY |
-| (all) Readiness score + gate decision | MEASURE 1 (metrics selected/applied) | documented go/no-go metric | subcat TODO-VERIFY |
+| Mode | MEASURE (primary / secondary) | Governance claim |
+|------|-------------------------------|------------------|
+| Structural / schema | **2.1** / 2.5 | data validity measured & documented pre-training |
+| Completeness | **2.5** / 2.11 | coverage/generalizability limits measured |
+| Distributional | **2.11** / 2.5 | population skew evaluated & documented |
+| Label | **2.3** / 2.5 | label integrity measured as an assurance criterion |
+| Provenance / documentation | **2.8** / 2.1 | lineage/consent documentation enforced |
+| Cross-source incompatibility | **2.5** / 2.11 | multi-site consistency measured |
+| (all) Readiness score + gate decision | **1.1** / 1.2, 2.13 | documented go/no-go metric |
 
 The MAP→MEASURE loop is the framing: the incident-derived taxonomy (MAP) sets
 *what to measure*; the gate *measures* it (MEASURE); the readiness score is the
-documented, pre-deployment metric.
+documented, pre-deployment metric. MEASURE 1.1's own wording — metrics for risks
+"enumerated during the MAP function are selected for implementation" — is the
+verbatim anchor for this loop.
 
 ## Limitations (for the reviewer who will ask)
 
