@@ -60,9 +60,11 @@ drive it.
 - **Oracle ceiling: DONE.** The `clean_only` condition *is* the omniscient gate
   (excludes exactly the degraded sources); `gate_realistic` is measured against it
   (`figD2`). Government structural recovers to the oracle; label does not.
-- **Dilution sweep: PENDING (the one remaining piece).** `run_downstream.py` now
-  emits an `n_degraded` column, so sweeping it and concatenating just works;
-  `analyze_downstream.py` auto-draws `figD4` once >1 level is present. Human runs:
+- **Dilution sweep: DONE (2-point, extendable).** Ran `--n-degraded 1` into
+  `experiments/results/dilution_nd1/`; combined with the nd=2 baseline,
+  `analyze_downstream.py` drew `figD4`: diluted label ECE rises with #corrupted
+  sources (government 0.080→0.120, healthcare 0.064→0.105; finance ~flat). Run
+  `--n-degraded 3` into `dilution_nd3/` to add the third point. Command:
 ```bash
 # repeat for --n-degraded 1 and 3 (keep <50% of n_sources=6 for consensus),
 # writing to distinct dirs, then concatenate the CSVs before analyze_downstream.

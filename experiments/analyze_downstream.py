@@ -55,6 +55,7 @@ def read_results_csv(path: Path) -> pd.DataFrame:
 
 
 def load_all() -> pd.DataFrame:
+    """The main nd=2 downstream grid — drives figD1/D2/D3 and the summary."""
     frames = []
     for d in DOMAINS:
         path = RESULTS / f"downstream_{d}.csv"
@@ -69,6 +70,35 @@ def load_all() -> pd.DataFrame:
     for c in METRICS + (["n_degraded"] if "n_degraded" in df.columns else []):
         df[c] = pd.to_numeric(df[c], errors="coerce")
     return df
+
+
+def load_dilution() -> pd.DataFrame | None:
+    """Concatenate the main grid (labelled n_degraded=2) with any
+    experiments/results/dilution_nd*/downstream_*.csv (each carrying its own
+    n_degraded), for the dilution curve figD4. Returns None if no sweep dir exists.
+    """
+    frames = []
+    # main files are the committed n_degraded=2 baseline (predate the column)
+    for d in DOMAINS:
+        path = RESULTS / f"downstream_{d}.csv"
+        if path.exists():
+            df = read_results_csv(path); df["domain"] = d
+            if "n_degraded" not in df.columns:
+                df["n_degraded"] = 2
+            frames.append(df)
+    sweep = sorted(RESULTS.glob("dilution_nd*/downstream_*.csv"))
+    if not sweep:
+        return None
+    for path in sweep:
+        d = path.stem.replace("downstream_", "")
+        if d not in DOMAINS:
+            continue
+        df = read_results_csv(path); df["domain"] = d
+        frames.append(df)
+    out = pd.concat(frames, ignore_index=True)
+    for c in METRICS + ["n_degraded"]:
+        out[c] = pd.to_numeric(out[c], errors="coerce")
+    return out
 
 
 def git_rev() -> str:
@@ -195,27 +225,31 @@ def fig_severity(df: pd.DataFrame) -> None:
 # ---------------------------------------------------------------------------
 # figD4 — harm vs #degraded sources (only if a dilution sweep is present)
 # ---------------------------------------------------------------------------
-def fig_dilution(df: pd.DataFrame) -> bool:
-    if "n_degraded" not in df.columns or df["n_degraded"].nunique() < 2:
+def fig_dilution(df: pd.DataFrame | None) -> bool:
+    if df is None or "n_degraded" not in df.columns or df["n_degraded"].nunique() < 2:
         return False
     sub = df[(df["condition"] == "all_ungated") & (df["mode"] == "label")]
-    levels = sorted(df["n_degraded"].dropna().unique())
+    levels = sorted(int(x) for x in df["n_degraded"].dropna().unique() if x > 0)
     fig, ax = plt.subplots(figsize=(7.5, 4.4))
     for d in DOMAINS:
         g = sub[sub["domain"] == d]
         ys = [g[g["n_degraded"] == n]["ece"].mean() for n in levels]
         ax.plot(levels, ys, "-o", color=DOM_COLOR[d], label=d.capitalize())
-    ax.set_xlabel("# degraded sources (of n_sources)")
+    ax.set_xlabel("# degraded sources (of 6)")
     ax.set_ylabel("ECE, all_ungated (diluted), label mode")
     ax.set_xticks(levels)
     ax.legend(fontsize=9)
     ax.set_title("Item 2: dilution — how many bad sources before pooled training "
                  "calibration breaks", fontsize=11.5)
     ax.grid(ls=":", alpha=0.5)
-    fig.text(0.5, -0.02,
+    fig.subplots_adjust(bottom=0.2)
+    npts = len(levels)
+    fig.text(0.5, -0.11,
              "As more of the 6 sources carry label noise, the DILUTED (all-sources) model's "
-             "calibration degrades — quantifying the 2-of-6 dilution that flattened the old arm.\n"
-             "Source: downstream_*.csv across n_degraded runs (condition=all_ungated, mode=label).",
+             "calibration degrades — quantifying the 2-of-6 dilution that flattened the old arm. "
+             f"Government/healthcare climb steeply; finance (balanced label) barely moves.\n"
+             f"({npts}-point curve, n_degraded ∈ {levels}; run --n-degraded 3 to extend it.) "
+             "Source: downstream_*.csv + dilution_nd*/ (condition=all_ungated, mode=label).",
              ha="center", fontsize=8.5)
     _save(fig, "figD4_dilution")
     return True
@@ -253,10 +287,10 @@ def main() -> int:
     fig_ece_harm_recovery(df)
     fig_wga_recovery(df)
     fig_severity(df)
-    if fig_dilution(df):
+    if fig_dilution(load_dilution()):
         print("  (dilution sweep detected — figD4 written)")
     else:
-        print("  (single n_degraded — figD4 skipped; run the dilution sweep to enable it)")
+        print("  (no dilution_nd*/ sweep — figD4 skipped; run the sweep to enable it)")
     write_summary(df)
     print("done.")
     return 0

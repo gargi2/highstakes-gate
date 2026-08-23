@@ -1,5 +1,5 @@
 # Pillar C downstream summary — aggregated from experiments/results/downstream_*.csv
-# Reproduce: .venv/Scripts/python.exe experiments/analyze_downstream.py (seed=42, git=43759f7)
+# Reproduce: .venv/Scripts/python.exe experiments/analyze_downstream.py (seed=42, git=628e017)
 # one row per (domain, mode, condition); means over seeds x severities
 # conditions: clean_only=oracle ceiling, all_ungated=diluted, corrupt_only=undiluted, gate_realistic=gate kept
 domain,mode,condition,n,auc,acc,worst_group_acc,subgroup_fnr_gap,ece

@@ -240,12 +240,14 @@ structural: undiluted corruption drops worst-group accuracy 0.911→0.853 and AU
 oracle** (vs 0.905 ungated). This is the clearest positive: where the gate withholds
 (structural), it recovers the downstream metric to the best achievable.
 
-**(d) Item 2 — harm scales monotonically with severity (figD3).** ECE of the
-undiluted label model climbs low→med→high: healthcare 0.147 → 0.287 → 0.431,
-government similar; all other modes stay on the clean baseline. The single-point arm
-could not show this curve. **Still pending:** the dilution sweep (`--n-degraded`
-∈ {1,2,3}) to trace harm vs number of degraded sources — command in
-`docs/NEXT_EXPERIMENTS.md` §1–2; `figD4` activates automatically once those runs exist.
+**(d) Item 2 — harm scales with severity AND with dilution (figD3, figD4).** ECE of
+the undiluted label model climbs low→med→high: healthcare 0.147 → 0.287 → 0.431,
+government similar; all other modes stay on the clean baseline (figD3). And the
+diluted (all-sources) model's label ECE rises with the **number** of corrupted
+sources — a 2-point curve (n_degraded ∈ {1,2}): government 0.080 → 0.120, healthcare
+0.064 → 0.105, finance ~flat 0.066 → 0.074 (figD4). Together these quantify the
+2-of-6 dilution that flattened the old aggregate-AUC arm. (Run `--n-degraded 3` to
+extend the dilution curve; `figD4` redraws automatically.)
 
 **Net:** Blocker 1 is resolved. The downstream story is now a real, honest result —
 *label noise is a calibration failure invisible to AUC; the gate recovers the
