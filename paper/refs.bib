@@ -1,0 +1,280 @@
+% =====================================================================
+% highstakes-gate bibliography — MIXED verification status.
+%
+% HARD RULE 2 (see CLAUDE.md): every citation is verified by fetching the
+% actual source (arXiv/DOI/publisher) before it enters PROSE. Status tags:
+%
+%   [VERIFIED-FETCH <date>]  confirmed here by fetching the source URL.
+%   [VERIFIED-CARRIED <date>] verified during FedCheck scoping (identifiers
+%                             from docs/PIVOT_SCOPE.md §1); re-confirm author
+%                             lists / page numbers against the publisher
+%                             record before submission.
+%   [TODO-VERIFY]            placeholder — DO NOT cite in prose until fetched
+%                             and confirmed. Never fill from memory.
+% =====================================================================
+
+
+% ------------------------------------------------------------------
+% VERIFIED-FETCH 2026-08-23 — the four still-open anchors + datasets.
+% ------------------------------------------------------------------
+
+@misc{euaiact2024,
+  % [VERIFIED-FETCH 2026-08-23] eur-lex.europa.eu/eli/reg/2024/1689/oj
+  % Pillar C: the binding EU risk-management regime for high-stakes AI.
+  author       = {{European Parliament and Council of the European Union}},
+  title        = {Regulation ({EU}) 2024/1689 of the European Parliament and of
+                  the Council of 13 June 2024 laying down harmonised rules on
+                  artificial intelligence (Artificial Intelligence Act)},
+  year         = {2024},
+  howpublished = {Official Journal of the European Union, L series, 2024/1689},
+  note         = {Adopted 13 June 2024; OJ L 2024/1689, 12 July 2024.
+                  ELI: http://data.europa.eu/eli/reg/2024/1689/oj}
+}
+
+@misc{isoiec42001,
+  % [VERIFIED-FETCH 2026-08-23] iso.org (ISO/IEC 42001:2023 catalogue entry).
+  % Pillar C: the AI management-system standard (assurance framing).
+  author       = {{ISO} and {IEC}},
+  title        = {{ISO/IEC} 42001:2023 --- Information technology ---
+                  Artificial intelligence --- Management system},
+  year         = {2023},
+  howpublished = {International Organization for Standardization / International
+                  Electrotechnical Commission},
+  note         = {First edition, 2023}
+}
+
+@article{zha2023datacentric,
+  % [VERIFIED-FETCH 2026-08-23] arXiv:2303.10158.
+  % Pillar D: data-centric AI survey — positions the readiness gate in the
+  % data-lifecycle literature (training-data development / data maintenance).
+  author  = {Zha, Daochen and Bhat, Zaid Pervaiz and Lai, Kwei-Herng and
+             Yang, Fan and Jiang, Zhimeng and Zhong, Shaochen and Hu, Xia},
+  title   = {Data-centric Artificial Intelligence: A Survey},
+  journal = {arXiv preprint},
+  year    = {2023},
+  note    = {arXiv:2303.10158}
+}
+
+@misc{secedgar,
+  % [VERIFIED-FETCH 2026-08-23] sec.gov/edgar/searchedgar/aboutedgar.htm
+  % Pillar B (finance domain): source of the financial-fields benchmark data.
+  author       = {{U.S. Securities and Exchange Commission}},
+  title        = {{EDGAR}: Electronic Data Gathering, Analysis, and Retrieval System},
+  year         = {2024},
+  howpublished = {\url{https://www.sec.gov/edgar/searchedgar/aboutedgar.htm}},
+  note         = {Public database of company filings. Accessed 2026-08-23}
+}
+
+@misc{nyctlc,
+  % [VERIFIED-FETCH 2026-08-23] nyc.gov/site/tlc/about/tlc-trip-record-data.page
+  % Pillar B (government domain candidate): NYC taxi trip records.
+  author       = {{New York City Taxi and Limousine Commission}},
+  title        = {{TLC} Trip Record Data},
+  year         = {2024},
+  howpublished = {\url{https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page}},
+  note         = {Yellow/green taxi and FHV trip records. Accessed 2026-08-23}
+}
+
+@misc{cmsopenpayments,
+  % [VERIFIED-FETCH 2026-08-23] cms.gov/priorities/key-initiatives/open-payments
+  % Pillar B (government domain candidate): CMS Open Payments disclosures.
+  author       = {{Centers for Medicare \& Medicaid Services}},
+  title        = {Open Payments},
+  year         = {2024},
+  howpublished = {\url{https://www.cms.gov/priorities/key-initiatives/open-payments}},
+  note         = {National disclosure program (ACA) of industry--provider
+                  financial relationships. Accessed 2026-08-23}
+}
+
+
+% ------------------------------------------------------------------
+% VERIFIED-CARRIED 2026-08-06 — the ten anchors (PIVOT_SCOPE.md §1).
+% Identifiers carried from the FedCheck scoping verification. Re-confirm
+% full author lists and page numbers against the publisher before submission.
+% ------------------------------------------------------------------
+
+@techreport{nistairmf2023,
+  % [VERIFIED-CARRIED 2026-08-06] NIST AI 100-1. Pillar C anchor.
+  author      = {{National Institute of Standards and Technology}},
+  title       = {Artificial Intelligence Risk Management Framework ({AI RMF} 1.0)},
+  institution = {NIST},
+  number      = {NIST AI 100-1},
+  year        = {2023},
+  note        = {DOI:10.6028/NIST.AI.100-1. Session 4 re-verifies exact MEASURE
+                 subcategory numbers against the official text.}
+}
+
+@inproceedings{sambasivan2021datacascades,
+  % [VERIFIED-CARRIED 2026-08-06] DOI 10.1145/3411764.3445518. CLOSEST PRIOR WORK.
+  author    = {Sambasivan, Nithya and Kapania, Shivani and Highfill, Hannah and
+               Akrong, Diana and Paritosh, Praveen and Aroyo, Lora M.},
+  title     = {``Everyone wants to do the model work, not the data work'':
+               Data Cascades in High-Stakes {AI}},
+  booktitle = {Proc.\ 2021 CHI Conference on Human Factors in Computing Systems},
+  year      = {2021},
+  note      = {DOI:10.1145/3411764.3445518}
+}
+
+@inproceedings{mcgregor2021aiid,
+  % [VERIFIED-CARRIED 2026-08-06] arXiv:2011.08512. Pillar A corpus.
+  author    = {McGregor, Sean},
+  title     = {Preventing Repeated Real World {AI} Failures by Cataloging
+               Incidents: The {AI} Incident Database},
+  booktitle = {Proc.\ AAAI Conference on Artificial Intelligence (IAAI)},
+  year      = {2021},
+  note      = {arXiv:2011.08512}
+}
+
+@misc{paeth2024aiid,
+  % [VERIFIED-CARRIED 2026-08-06] arXiv:2409.16425. Pillar A taxonomy precedent.
+  author = {Paeth, Kevin and Atherton, Daniel and McGregor, Sean and others},
+  title  = {Lessons for Editors of {AI} Incidents from the {AI} Incident Database},
+  year   = {2024},
+  note   = {arXiv:2409.16425. TODO-VERIFY full author list before submission}
+}
+
+@inproceedings{mitchell2019modelcards,
+  % [VERIFIED-CARRIED 2026-08-06] DOI 10.1145/3287560.3287596. Pillar C.
+  author    = {Mitchell, Margaret and Wu, Simone and Zaldivar, Andrew and
+               Barnes, Parker and Vasserman, Lucy and Hutchinson, Ben and
+               Spitzer, Elena and Raji, Inioluwa Deborah and Gebru, Timnit},
+  title     = {Model Cards for Model Reporting},
+  booktitle = {Proc.\ Conference on Fairness, Accountability, and Transparency (FAT*)},
+  year      = {2019},
+  note      = {DOI:10.1145/3287560.3287596}
+}
+
+@article{gebru2021datasheets,
+  % [VERIFIED-CARRIED 2026-08-06] DOI 10.1145/3458723. Pillar C.
+  author  = {Gebru, Timnit and Morgenstern, Jamie and Vecchione, Briana and
+             Vaughan, Jennifer Wortman and Wallach, Hanna and
+             Daum{\'e} III, Hal and Crawford, Kate},
+  title   = {Datasheets for Datasets},
+  journal = {Communications of the ACM},
+  volume  = {64},
+  number  = {12},
+  year    = {2021},
+  note    = {DOI:10.1145/3458723}
+}
+
+@article{bender2018datastatements,
+  % [VERIFIED-CARRIED 2026-08-06] TACL 2018, ACL Q18-1041. Pillar C.
+  author  = {Bender, Emily M. and Friedman, Batya},
+  title   = {Data Statements for Natural Language Processing: Toward Mitigating
+             System Bias and Enabling Better Science},
+  journal = {Transactions of the Association for Computational Linguistics (TACL)},
+  volume  = {6},
+  year    = {2018},
+  note    = {ACL Anthology Q18-1041; DOI:10.1162/tacl\_a\_00041}
+}
+
+@inproceedings{sculley2015debt,
+  % [VERIFIED-CARRIED 2026-08-06] NeurIPS 2015. Pillars A, D.
+  author    = {Sculley, D. and Holt, Gary and Golovin, Daniel and Davydov, Eugene
+               and Phillips, Todd and Ebner, Dietmar and Chaudhary, Vinay and
+               Young, Michael and Crespo, Jean-Fran{\c{c}}ois and Dennison, Dan},
+  title     = {Hidden Technical Debt in Machine Learning Systems},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2015}
+}
+
+@misc{amodei2016concrete,
+  % [VERIFIED-CARRIED 2026-08-06] arXiv:1606.06565. Pillar A framing.
+  author = {Amodei, Dario and Olah, Chris and Steinhardt, Jacob and
+            Christiano, Paul and Schulman, John and Man{\'e}, Dan},
+  title  = {Concrete Problems in {AI} Safety},
+  year   = {2016},
+  note   = {arXiv:1606.06565}
+}
+
+@article{zhang2020mltesting,
+  % [VERIFIED-CARRIED 2026-08-06] DOI 10.1109/TSE.2019.2962027. Pillar A method.
+  author  = {Zhang, Jie M. and Harman, Mark and Ma, Lei and Liu, Yang},
+  title   = {Machine Learning Testing: Survey, Landscapes and Horizons},
+  journal = {IEEE Transactions on Software Engineering},
+  year    = {2020},
+  note    = {DOI:10.1109/TSE.2019.2962027}
+}
+
+
+% ------------------------------------------------------------------
+% Reusable from FedCheck (domain-agnostic data-quality / DP anchors).
+% ------------------------------------------------------------------
+
+@article{mimiciv,
+  % [VERIFIED-CARRIED 2026-08-02] DOI 10.1038/s41597-022-01899-x. Pillar B (health).
+  author  = {Johnson, Alistair E. W. and Bulgarelli, Lucas and Shen, Lu and others},
+  title   = {{MIMIC-IV}, a freely accessible electronic health record dataset},
+  journal = {Scientific Data},
+  volume  = {10},
+  number  = {1},
+  year    = {2023},
+  note    = {DOI:10.1038/s41597-022-01899-x. TODO-VERIFY full author list}
+}
+
+@book{dwork2014,
+  % [TODO-VERIFY] Laplace mechanism, sensitivity, composition, histogram
+  % sensitivity example. Cited by the DP gate (src/gate/privacy.py).
+  author    = {TODO-VERIFY (Dwork, Cynthia and Roth, Aaron)},
+  title     = {The Algorithmic Foundations of Differential Privacy},
+  year      = {TODO-VERIFY},
+  publisher = {TODO-VERIFY},
+  note      = {TODO-VERIFY — confirm the histogram-sensitivity example number}
+}
+
+@misc{greatexpectations,
+  % [TODO-VERIFY] data-quality validation practice — inspiration for the suite.
+  author = {TODO-VERIFY},
+  title  = {Great Expectations: Always Know What to Expect From Your Data},
+  year   = {TODO-VERIFY},
+  note   = {TODO-VERIFY software/citation}
+}
+
+@article{jensenshannon,
+  % [TODO-VERIFY] JS divergence — used by src/gate/compatibility.py.
+  author  = {TODO-VERIFY (Lin, Jianhua)},
+  title   = {Divergence Measures Based on the Shannon Entropy},
+  journal = {TODO-VERIFY (IEEE Transactions on Information Theory)},
+  year    = {TODO-VERIFY},
+  note    = {TODO-VERIFY}
+}
+
+@misc{diffprivlib,
+  % [TODO-VERIFY] reference DP implementation for the Laplace cross-check.
+  author = {TODO-VERIFY},
+  title  = {Diffprivlib: The {IBM} Differential Privacy Library},
+  year   = {TODO-VERIFY},
+  note   = {TODO-VERIFY}
+}
+
+@misc{zhou2024dqtools,
+  % [TODO-VERIFY] DQ-tools survey named reusable in PIVOT_SCOPE.md §1 but not
+  % present in the copied FedCheck refs.bib — locate and verify before citing.
+  author = {TODO-VERIFY},
+  title  = {TODO-VERIFY (data-quality tools survey)},
+  year   = {TODO-VERIFY},
+  note   = {TODO-VERIFY — referenced in PIVOT_SCOPE.md §1}
+}
+
+@misc{mohammed2025dataquality,
+  % [TODO-VERIFY] tabular data-quality effects, named reusable in PIVOT_SCOPE §1;
+  % not in copied refs.bib — locate and verify before citing.
+  author = {TODO-VERIFY},
+  title  = {TODO-VERIFY (effects of tabular data quality on ML)},
+  year   = {TODO-VERIFY},
+  note   = {TODO-VERIFY — referenced in PIVOT_SCOPE.md §1}
+}
+
+
+% ------------------------------------------------------------------
+% Self-citation — the validated single-domain instantiation.
+% ------------------------------------------------------------------
+
+@misc{fedcheck,
+  % [TODO-VERIFY] FedCheck is unshipped as of 2026-08-23. Fill arXiv ID / venue
+  % once posted; this paper cites it as the validated gate instantiation.
+  author = {Desai, Gargi and others (TODO-VERIFY author block)},
+  title  = {{FedCheck}: Pre-training Data-Readiness Gating for Federated Learning},
+  year   = {TODO-VERIFY},
+  note   = {TODO-VERIFY — unpublished as of 2026-08-23; add arXiv ID when posted}
+}
