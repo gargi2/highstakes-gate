@@ -51,6 +51,10 @@ class Domain:
     # per domain just above the clean-source divergence at epsilon=inf, because
     # the JS baseline depends on each domain's feature scale and bin resolution.
     divergence_threshold: float = 0.08
+    # Equity axis for the downstream subgroup metrics (experiments/run_downstream.py).
+    # None -> the harness falls back to feature_columns[0]. Binned into quantiles on
+    # the clean holdout; worst-group accuracy / FNR gap / ECE are computed over the bins.
+    subgroup_column: str | None = None
     notes: str = ""
 
     @property

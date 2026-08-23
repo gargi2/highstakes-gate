@@ -160,3 +160,21 @@ before acting (not accepted on assertion). Findings, all reproducible from
   full RMF = 72 subcategories, this maps only MEASURE (21) by design.
 New: `paper/figures/fig6_detection_action_gap.{pdf,png}` (the spine),
 `docs/NEXT_EXPERIMENTS.md` (ranked plan to close B1/B2 and strengthen the rest).
+
+### V9 — downstream-arm redesign (item 1) drafted + smoke-tested (2026-08-23)
+New code (human reviews before the full run — CLAUDE.md hard rule 4):
+`experiments/run_downstream.py`, `src/domains/metrics.py`,
+`tests/test_downstream.py`, plus a backward-compatible `Domain.subgroup_column`
+field. Four training conditions per cell (clean_only=oracle, all_ungated=diluted,
+corrupt_only=undiluted, gate_realistic); sensitive metrics worst-group accuracy /
+subgroup FNR gap / ECE (numpy-only, no new dependency).
+```bash
+.venv/Scripts/python.exe experiments/run_downstream.py --smoke   # <1 min, synthetic
+.venv/Scripts/python.exe -m pytest tests/ -q                     # 38 passed
+```
+Smoke outcome (synthetic — sanity, NOT a paper result): label corruption drops
+worst-group accuracy by 0.49 (healthcare) / 0.43 (government) and raises ECE from
+~0.02 to ~0.34 (clean_only vs corrupt_only) while aggregate AUC barely moved —
+confirming the redesigned arm sees what the old one missed. `gate_realistic`
+withholds structural (n_train 6→4) but not label (stays 6), matching the spine.
+Real-data grid pending (human runs the command in NEXT_EXPERIMENTS §1).

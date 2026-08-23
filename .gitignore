@@ -27,6 +27,7 @@ experiments/results/*.TEMPLATE.csv
 experiments/results/taxonomy_sample_human_labels.csv
 # smoke CSVs are reproducible dev/CI artifacts; the human commits the full-grid CSVs
 experiments/results/crossdomain_*_smoke.csv
+experiments/results/downstream_*_smoke.csv
 
 # --- Paper build ---
 paper/*.aux

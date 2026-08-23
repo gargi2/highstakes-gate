@@ -11,26 +11,44 @@ Status legend: 🔴 blocks submission · 🟡 strengthens · 🟢 polish.
 
 ---
 
-## 1. 🔴 Redesign the downstream arm — subgroup metrics + undiluted signal
-**Closes Blocker 1 (verified: clean ≈ corrupted-ungated, max ΔAUC 0.0045 — the arm
-currently measures nothing).**
+## 1. ✅ IMPLEMENTED — Redesign the downstream arm (subgroup metrics + undiluted signal)
+**Closes Blocker 1 (verified: clean ≈ corrupted-ungated, max ΔAUC 0.0045 — the old
+arm measured nothing).** Built as a NEW, focused script so the detection grids are
+untouched:
 
-Why the current arm is blind: only 2 of 6 sources are corrupted (dilution) and the
-metric is aggregate AUC on a *clean* holdout — the least sensitive choice.
+- `experiments/run_downstream.py` — four training conditions per cell:
+  `clean_only` (= oracle ceiling, the undegraded sources), `all_ungated` (diluted
+  floor), `corrupt_only` (**undiluted** damage), `gate_realistic` (what the real
+  gate kept). One CSV per domain: `downstream_<domain>.csv`.
+- `src/domains/metrics.py` — numpy-only **worst-group accuracy**, **subgroup FNR
+  gap**, **ECE**, alongside AUC/accuracy; subgroups = quantile bins of an equity
+  axis (`Domain.subgroup_column`, default `feature_columns[0]`: healthcare=age,
+  finance=log_assets, government=log_amount) on the **clean holdout**.
+- `tests/test_downstream.py` — 7 tests guard the metrics + four-condition wiring.
 
-Changes to `experiments/run_crossdomain.py` / `src/domains/base.py`:
-- Add a **corrupted-only** training condition (train on just the degraded sources)
-  alongside the diluted pooled one, so the corruption's effect is observable at all.
-- Replace/augment `auc_delta` with **worst-group accuracy**, **subgroup FNR**, and
-  **expected calibration error (ECE)**. For subgroups use an existing categorical
-  (healthcare: age band; finance: sector/size decile; government: payment nature).
-- Emit `auc`, `worst_group_acc`, `subgroup_fnr_gap`, `ece` for clean /
-  corrupted-ungated / corrupted-gated (the **three-way**, per cell).
+**Smoke evidence (synthetic — not for the paper, but confirms sensitivity):** on
+`--smoke`, label corruption drops worst-group accuracy by 0.49 (healthcare) /
+0.43 (government) and pushes ECE from ~0.02 to ~0.34 between `clean_only` and
+`corrupt_only`, while aggregate AUC barely moved — exactly the metric the old arm
+was blind to. `gate_realistic == all_ungated` for label (gate didn't withhold it),
+so it does not recover — consistent with the spine.
 
-Result that resolves it: if worst-group accuracy or ECE degrades under corruption
-and recovers under gating, the null becomes an honest **positive**. If it still
-doesn't move, we report "no downstream effect measurable even with sensitive
-metrics" — a real, defensible negative (not the current uninformative one).
+**The human runs the real grid** (heavy I/O — reads each extract once/domain):
+```bash
+.venv/Scripts/python.exe experiments/run_downstream.py --seeds 5 --max-rows 40000 \
+  --data-root healthcare=data/healthcare --data-root finance=data \
+  --data-root government=data/PGYR2025_P06302026_06032026
+```
+Then: read `downstream_*.csv` and report, per mode/domain, the `clean_only −
+corrupt_only` gaps in worst-group accuracy / FNR / ECE, and whether `gate_realistic`
+recovers toward `clean_only`. If those gaps move, the null becomes an honest
+**positive**; if not, report "no downstream effect even with sensitive metrics" — a
+real negative, not the current uninformative one. (A figure/summary for `analyze.py`
+is deferred until the real CSVs exist, to avoid plotting synthetic smoke.)
+
+**Still open (do next within this item):** the severity×dilution sweep + oracle is
+item 2; `run_downstream.py` already accepts `--n-degraded` and `--severities` to
+drive it.
 
 ## 2. 🔴 Severity × dilution sweep + oracle ceiling
 **Also Blocker 1; turns single points into severity–detectability curves.**
