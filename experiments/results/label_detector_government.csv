@@ -1,0 +1,77 @@
+# Pillar C item 3 — label-noise detector comparison — domain=government
+# Reproduce: .venv/Scripts/python.exe experiments/run_label_detector.py --seeds 5 --max-rows 40000 --data-root healthcare=data/healthcare --data-root finance=data --data-root government=data/PGYR2025_P06302026_06032026
+# git=59d045c seeds=5 n_sources=6 n_degraded=2 n_rows=4000 max_rows=40000
+# detectors: marginal=gate consensus label-rate (positive_rate_noised); confident=cross-validated self-disagreement (domains.label_quality, extension)
+# noise: symmetric=gate label_noise flip; asymmetric=positives->negatives at `rate` (marginal regains signal)
+# columns: domain,noise_type,rate,seed,detector,det_precision,det_recall,n_sources,n_degraded
+domain,noise_type,rate,seed,detector,det_precision,det_recall,n_sources,n_degraded
+government,symmetric,0.15,0,marginal,,0.0,6,2
+government,symmetric,0.15,0,confident,1.0,1.0,6,2
+government,symmetric,0.15,1,marginal,,0.0,6,2
+government,symmetric,0.15,1,confident,1.0,1.0,6,2
+government,symmetric,0.15,2,marginal,,0.0,6,2
+government,symmetric,0.15,2,confident,1.0,1.0,6,2
+government,symmetric,0.15,3,marginal,,0.0,6,2
+government,symmetric,0.15,3,confident,1.0,1.0,6,2
+government,symmetric,0.15,4,marginal,,0.0,6,2
+government,symmetric,0.15,4,confident,1.0,1.0,6,2
+government,symmetric,0.3,0,marginal,1.0,1.0,6,2
+government,symmetric,0.3,0,confident,1.0,1.0,6,2
+government,symmetric,0.3,1,marginal,1.0,1.0,6,2
+government,symmetric,0.3,1,confident,1.0,1.0,6,2
+government,symmetric,0.3,2,marginal,1.0,1.0,6,2
+government,symmetric,0.3,2,confident,1.0,1.0,6,2
+government,symmetric,0.3,3,marginal,1.0,1.0,6,2
+government,symmetric,0.3,3,confident,1.0,1.0,6,2
+government,symmetric,0.3,4,marginal,1.0,1.0,6,2
+government,symmetric,0.3,4,confident,1.0,1.0,6,2
+government,symmetric,0.45,0,marginal,1.0,1.0,6,2
+government,symmetric,0.45,0,confident,1.0,1.0,6,2
+government,symmetric,0.45,1,marginal,1.0,1.0,6,2
+government,symmetric,0.45,1,confident,1.0,1.0,6,2
+government,symmetric,0.45,2,marginal,1.0,1.0,6,2
+government,symmetric,0.45,2,confident,1.0,1.0,6,2
+government,symmetric,0.45,3,marginal,1.0,1.0,6,2
+government,symmetric,0.45,3,confident,1.0,1.0,6,2
+government,symmetric,0.45,4,marginal,1.0,1.0,6,2
+government,symmetric,0.45,4,confident,1.0,1.0,6,2
+government,asymmetric,0.1,0,marginal,,0.0,6,2
+government,asymmetric,0.1,0,confident,1.0,1.0,6,2
+government,asymmetric,0.1,1,marginal,,0.0,6,2
+government,asymmetric,0.1,1,confident,1.0,1.0,6,2
+government,asymmetric,0.1,2,marginal,,0.0,6,2
+government,asymmetric,0.1,2,confident,1.0,1.0,6,2
+government,asymmetric,0.1,3,marginal,,0.0,6,2
+government,asymmetric,0.1,3,confident,1.0,1.0,6,2
+government,asymmetric,0.1,4,marginal,,0.0,6,2
+government,asymmetric,0.1,4,confident,1.0,1.0,6,2
+government,asymmetric,0.2,0,marginal,1.0,1.0,6,2
+government,asymmetric,0.2,0,confident,1.0,1.0,6,2
+government,asymmetric,0.2,1,marginal,1.0,1.0,6,2
+government,asymmetric,0.2,1,confident,1.0,1.0,6,2
+government,asymmetric,0.2,2,marginal,1.0,1.0,6,2
+government,asymmetric,0.2,2,confident,1.0,1.0,6,2
+government,asymmetric,0.2,3,marginal,1.0,1.0,6,2
+government,asymmetric,0.2,3,confident,1.0,1.0,6,2
+government,asymmetric,0.2,4,marginal,1.0,1.0,6,2
+government,asymmetric,0.2,4,confident,1.0,1.0,6,2
+government,asymmetric,0.3,0,marginal,1.0,1.0,6,2
+government,asymmetric,0.3,0,confident,1.0,1.0,6,2
+government,asymmetric,0.3,1,marginal,1.0,1.0,6,2
+government,asymmetric,0.3,1,confident,1.0,1.0,6,2
+government,asymmetric,0.3,2,marginal,1.0,1.0,6,2
+government,asymmetric,0.3,2,confident,1.0,1.0,6,2
+government,asymmetric,0.3,3,marginal,1.0,1.0,6,2
+government,asymmetric,0.3,3,confident,1.0,1.0,6,2
+government,asymmetric,0.3,4,marginal,1.0,1.0,6,2
+government,asymmetric,0.3,4,confident,1.0,1.0,6,2
+government,asymmetric,0.45,0,marginal,1.0,1.0,6,2
+government,asymmetric,0.45,0,confident,1.0,1.0,6,2
+government,asymmetric,0.45,1,marginal,1.0,1.0,6,2
+government,asymmetric,0.45,1,confident,1.0,1.0,6,2
+government,asymmetric,0.45,2,marginal,1.0,1.0,6,2
+government,asymmetric,0.45,2,confident,1.0,1.0,6,2
+government,asymmetric,0.45,3,marginal,1.0,1.0,6,2
+government,asymmetric,0.45,3,confident,1.0,1.0,6,2
+government,asymmetric,0.45,4,marginal,1.0,1.0,6,2
+government,asymmetric,0.45,4,confident,1.0,1.0,6,2

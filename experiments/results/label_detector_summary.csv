@@ -1,0 +1,16 @@
+# Pillar C item 3 label-detector summary — from label_detector_*.csv
+# Reproduce: .venv/Scripts/python.exe experiments/analyze_label_detector.py (seed=42, git=59d045c)
+# one row per (domain, noise_type, detector); means over rates x seeds
+domain,noise_type,detector,n,det_recall,det_precision
+finance,asymmetric,confident,20,0.0,
+finance,asymmetric,marginal,20,0.25,1.0
+finance,symmetric,confident,15,0.6333,1.0
+finance,symmetric,marginal,15,0.0,
+government,asymmetric,confident,20,1.0,1.0
+government,asymmetric,marginal,20,0.75,1.0
+government,symmetric,confident,15,1.0,1.0
+government,symmetric,marginal,15,0.6667,1.0
+healthcare,asymmetric,confident,20,0.0,
+healthcare,asymmetric,marginal,20,0.0,
+healthcare,symmetric,confident,15,1.0,1.0
+healthcare,symmetric,marginal,15,0.6667,1.0

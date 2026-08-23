@@ -82,8 +82,8 @@ def fig_symmetric(df: pd.DataFrame) -> None:
         ax.text(i + w / 2, rec.loc[d, "confident"] + 0.02, f"{rec.loc[d,'confident']:.2f}", ha="center", fontsize=9)
     ax.set_xticks(x, [d.capitalize() for d in DOMAINS])
     ax.set_ylabel("detection recall (symmetric label noise)")
-    ax.set_ylim(0, 1.12)
-    ax.legend(loc="lower center", fontsize=9)
+    ax.set_ylim(0, 1.15)
+    ax.legend(loc="upper right", fontsize=9, framealpha=0.95)
     ax.set_title("Item 3: confident-learning closes the symmetric-label-noise blind spot",
                  fontsize=12)
     fig.text(0.5, -0.04,
