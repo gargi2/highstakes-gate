@@ -1,4 +1,4 @@
-# --- Data (never commit; see CLAUDE.md "Local data paths") ---
+# --- Data (never commit; see CONVENTIONS.md "Local data paths") ---
 data/
 !data/.gitkeep
 
@@ -23,7 +23,7 @@ htmlcov/
 experiments/results/*.tmp
 experiments/results/_scratch/
 experiments/results/*.TEMPLATE.csv
-# human labels are filled by the reviewer, not committed by the assistant
+# human labels are filled by the reviewer, not committed automatically
 experiments/results/taxonomy_sample_human_labels.csv
 # smoke CSVs are reproducible dev/CI artifacts; the human commits the full-grid CSVs
 experiments/results/crossdomain_*_smoke.csv

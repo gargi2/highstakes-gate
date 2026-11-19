@@ -26,9 +26,9 @@ maps it to governance.
    prose until confirmed.
 3. **Fixed seeds.** Every experiment uses a fixed seed, and every results file
    records the exact command that reproduces it in its header.
-4. **Human reviews AI-written code before commit.** AI drafts and smoke-tests;
-   the human reads it before it is committed. Heavy compute (full extractions,
-   full grids) runs outside the assistant.
+4. **Review before commit.** Every script is smoke-tested, then read by the
+   author before it is committed. Heavy compute (full extractions, full grids)
+   is run directly by the author, outside the fast dev loop.
 
 ## Stack
 - Python 3.10+ (`.venv` in repo root)
@@ -49,7 +49,7 @@ maps it to governance.
 ## Local data paths
 - `data/` is **gitignored** — never commit raw data files of any kind.
 - Any restricted dataset (e.g. PhysioNet/MIMIC under a DUA) is treated as
-  **read-only**. Restricted rows must never appear in an assistant prompt.
+  **read-only**. Restricted rows must never appear in any prompt, log, or upload.
 - Output from any restricted source is **aggregates / shapes only** (counts,
   schemas, histograms, noised statistics) — **never rows**.
 

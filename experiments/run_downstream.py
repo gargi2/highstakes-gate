@@ -16,7 +16,7 @@ least sensitive metric. This script fixes both, WITHOUT touching the detection g
     calibration error (ECE) — alongside AUC (`domains.metrics`).
 
 The gate, degradations, split, and model are all REUSED (imported, not modified).
-All output is metrics/decisions — never a data row (CLAUDE.md).
+All output is metrics/decisions — never a data row (CONVENTIONS.md).
 
 Smoke (synthetic, <1 min; CI/dev):
     .venv/Scripts/python.exe experiments/run_downstream.py --smoke

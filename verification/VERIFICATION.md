@@ -1,6 +1,6 @@
 # Verification log
 
-Per CLAUDE.md hard rule 4, the human reads AI-written code before commit and
+Per CONVENTIONS.md hard rule 4, the author reviews all code before commit and
 records verifications here. Each entry: what was run, the command, and the
 outcome. Numbers are quoted from files or command output, never memory.
 
@@ -95,7 +95,7 @@ Real-data findings recorded (not bugs):
 - One EDGAR quarter yields only ~1.4k filings with all five tags → finance
   loader reads every `num.txt` under the root (7 quarters ≈ 11k filings).
 
-### Pending (human runs; no assistant credits)
+### Pending (run by the author)
 Full grid + real extractions — see `--print-commands` and the commands below.
 Results land in `experiments/results/crossdomain_<domain>.csv`.
 
@@ -162,7 +162,7 @@ New: `paper/figures/fig6_detection_action_gap.{pdf,png}` (the spine),
 `docs/NEXT_EXPERIMENTS.md` (ranked plan to close B1/B2 and strengthen the rest).
 
 ### V9 — downstream-arm redesign (item 1) drafted + smoke-tested (2026-08-23)
-New code (human reviews before the full run — CLAUDE.md hard rule 4):
+New code (reviewed before the full run — CONVENTIONS.md hard rule 4):
 `experiments/run_downstream.py`, `src/domains/metrics.py`,
 `tests/test_downstream.py`, plus a backward-compatible `Domain.subgroup_column`
 field. Four training conditions per cell (clean_only=oracle, all_ungated=diluted,
@@ -219,3 +219,228 @@ Prototype + smoke (synthetic — sanity, not paper numbers):
 Honest caveats recorded: finance gap smallest (high base error); asymmetric detection
 on rare-label domains weak for both detectors; rigorous DP of a CV statistic is future
 work (approximate `epsilon` option flagged). Real-data grid pending (human).
+
+---
+
+## Session 5 — novelty pass + positioning anchors (2026-08-25)
+
+### V12 — spine novelty pass + citation verification (2026-08-25)
+Verified the composite-masking spine against the literature by fetching primary
+sources (WebSearch + WebFetch). Outcome: **spine survives** — no fetched source
+claims composite/threshold readiness scoring masks severe single-dimension defects
+with a detection-rate vs gate-action-rate split, benchmarked cross-domain. Framing
+adjusted to "known-in-principle, never quantified as a gate-action gap."
+
+Anchors fetched and stamped `[VERIFIED-FETCH 2026-08-25]` in `paper/refs.bib`
+(title / ordered authors / venue confirmed against the source):
+- `breck2019datavalidation` — proceedings.mlsys.org (MLSys 2019).
+- `schelter2018deequ` — PVLDB 11(12):1781--1794, 2018.
+- `lawrence2017datareadiness` — arXiv:1705.02245.
+- `afzal2020datareadinessreport` — arXiv:2010.07213 (abstract only; CAVEAT: specific
+  ML checks NOT confirmed — do not attribute in prose until full text read).
+- `rokvic2022lia` — arXiv:2205.11518 / IEEE BigData 2024.
+- `hiniduma2025aidrin` — arXiv:2505.18213 (full text read). Nearest neighbor:
+  report-only, per-dimension, no gate decision, no masking discussion → delta line
+  recorded in the entry.
+Left `TODO-VERIFY`: `caveness2020tfdv` (ACM 403, dblp API 500 on 2026-08-25 — author
+list not source-confirmed; cite `breck2019datavalidation` for the method meanwhile).
+No code run; no result CSVs changed. See `memory/novelty-pass-masking-spine.md`.
+
+### V13 — aggregation-rule ablation (item 4, the spine's "fix") drafted + smoke-tested (2026-08-25)
+New extension (frozen gate untouched — `git diff src/gate/` empty): decision rules
+`src/domains/aggregation.py` (`weighted_mean`=score_source verbatim, `max_violation`,
+`any_critical`), experiment `experiments/run_aggregation_ablation.py`, tests
+`tests/test_aggregation.py`. Detection = `deg.flagged_for_mode` (rule-independent);
+action = `decision != READY`; gap = det_recall - action_rate; clean_fpr = clean
+sources not marked READY.
+```bash
+.venv/Scripts/python.exe -m pytest tests/ -q                          # 51 passed
+.venv/Scripts/python.exe experiments/run_aggregation_ablation.py --smoke
+```
+Smoke (synthetic — sanity, NOT paper numbers): mean gap over degraded cells /
+clean_fpr at mode=none, per rule:
+- healthcare: weighted_mean 0.250 / 0.000 -> max_violation 0.250 / 0.000 ->
+  any_critical 0.000 / 0.100
+- finance:    weighted_mean 0.500 / 0.000 -> max_violation 0.000 / 0.000 ->
+  any_critical 0.000 / 0.000
+- government: weighted_mean 0.750 / 0.000 -> max_violation 0.500 / 0.000 ->
+  any_critical 0.000 / 0.000
+Confirms the predicted shape: `max_violation` is a PARTIAL fix (catches tanked
+dimensions but not a single check hidden in pass_rate=0.93 — healthcare unchanged);
+`any_critical` closes the gap fully at a small, measurable clean-FPR cost. Real-data
+grid + a figure/summary are pending (human) — analyzer deferred to avoid plotting
+synthetic smoke, per repo discipline.
+
+### V14 — external-baseline harness + Colab notebook (item 6) — 2026-08-25
+New (nothing in `src/gate/` touched): `experiments/baselines/gen_baseline_sources.py`
+(regenerates the gate's exact per-cell sources — same seeds/splits/degrade as
+run_crossdomain), `tests/test_baseline_sources.py` (5 tests), and
+`experiments/baselines/baselines_colab.ipynb` (GE 0.18.19 + TFDV + Deequ default
+checks → `baselines_detection.csv`, per-mode det_recall + false_flag_rate aligned to
+the gate).
+```bash
+.venv/Scripts/python.exe -m pytest tests/ -q                 # 56 passed
+.venv/Scripts/python.exe experiments/baselines/gen_baseline_sources.py   # rows-free self-check
+.venv/Scripts/python.exe -c "import json;json.load(open('experiments/baselines/baselines_colab.ipynb'))"  # valid ipynb
+```
+Source-regenerator verified locally (structural drops columns in degraded sources
+only; completeness raises nulls >0.3 in degraded only; reproducible per seed; correct
+degraded counts/indices). **The three baseline adapters (GE/TFDV/Deequ) were NOT run**
+— TFDV/Deequ don't run on this Windows box; the human runs the notebook in Colab and
+copies `baselines_detection.csv` back. Data safety: synthetic by default; healthcare
+stays synthetic (MIMIC DUA); finance/government public extracts optional via DATA_ROOT.
+
+### V15 — real-data analysis of items 4 & 6 (2026-08-25)
+Human ran the real aggregation-ablation grid (`aggregation_{healthcare,finance,
+government}.csv`, 2925 cells) and the Colab baseline notebook
+(`baselines_detection.csv`; **GE ran, TFDV/Deequ empty**). Analyzers added:
+`experiments/analyze_aggregation.py` (figA1/figA2 + `aggregation_summary.csv`) and
+`experiments/analyze_baselines.py` (figBL + `baselines_summary.csv`).
+```bash
+.venv/Scripts/python.exe experiments/analyze_aggregation.py
+.venv/Scripts/python.exe experiments/analyze_baselines.py
+```
+Numbers quoted in `docs/FINDINGS.md` Findings 9–10, all from the summary CSVs:
+- **Item 4 (Finding 9):** gap (det−action, ε=∞) weighted_mean → any_critical: finance
+  0.433→0.000, government 0.667→0.000, healthcare −0.083→−0.250; max_violation partial.
+  Clean-FPR by rule×ε: any_critical **0.000 (ε≥1) → 0.011 (ε=0.5) → 0.878 (ε=0.1)**;
+  weighted_mean 0.000 at every ε. → the fix closes the gap free for ε≥0.5 but is
+  DP-noise-fragile at ε=0.1 (privacy↔aggregation tradeoff). Honest, not a strict win.
+- **Item 6 (Finding 10):** gate vs GE det_recall ties at 1.0 on structural/completeness;
+  both miss balanced-finance label (gate 0.0, GE 0.2); GE clean false-flag hc 0.333 /
+  fin 0.067 / gov 0.000 vs gate 0.000 everywhere. GE used reference-derived expectations
+  (noted); TFDV/Deequ absent (reported as ABSENT, not zero). 56 tests still pass.
+
+### V16 — Deequ baseline added via headless Docker runner (2026-08-26)
+`experiments/baselines/run_baselines.py` (new, py3.11/Docker) run in `python:3.11-slim`
+with `pyspark==3.5.1` + `SPARK_VERSION=3.5` (pydeequ rejects Spark 3.4). **GE + Deequ ran;
+TFDV skipped** (pyfarmhash needs g++, absent in slim; apache-beam[gcp] resolver). Re-ran
+`analyze_baselines.py` → figBL now has 3 series, `baselines_summary.csv` = 45 rows.
+Deequ (from `baselines_detection.csv`): det_recall structural/completeness/distributional
+= 1.0 all domains, **label = 0.0 all domains** (adapter has no label constraint), clean
+false_flag = 0.000 all domains. Three-way reading in FINDINGS Finding 10. No src/ changed;
+synthetic-only in the container (no data/ read).
+
+### V17 — bootstrap 95% CIs (item 7) — 2026-08-26
+Added `experiments/ci_utils.py` (seed-level percentile bootstrap, 10k resamples,
+seed=42) and wired CIs into analyze.py (fig6 + metrics_summary CI columns),
+analyze_aggregation.py (figA1 error bars), analyze_baselines.py (figBL error bars).
+```bash
+.venv/Scripts/python.exe experiments/analyze.py
+.venv/Scripts/python.exe experiments/analyze_aggregation.py
+.venv/Scripts/python.exe experiments/analyze_baselines.py
+.venv/Scripts/python.exe -m pytest tests/ -q      # 56 passed
+```
+Headline (from crossdomain_*.csv, eps=inf, all modes/domains): detect 0.756
+[0.739,0.764], withhold 0.417 [0.417,0.417], GAP 0.339 (95% CI [0.322,0.347]) —
+excludes 0 widely, so the spine is not seed noise. No new experiment runs (existing
+5 seeds); no src/ changed (git diff src/gate empty). FINDINGS Finding 2 updated with
+the CI.
+
+### V18 — runners for items 3.2 (threshold transfer) & 3.3 (confident ε-sweep) — 2026-08-26
+New (frozen gate untouched — git diff src/gate empty): `experiments/run_threshold_transfer.py`
+(cold cross-domain divergence_threshold transfer: diagonal=own, off-diagonal=transferred;
+det_recall + clean false_flag) and `experiments/run_label_epsilon.py` (DP ε-sweep of the
+confident-learning self-disagreement detector + per-domain clean-disagreement calibration
+stats). Both smoke-tested (synthetic):
+```bash
+.venv/Scripts/python.exe experiments/run_threshold_transfer.py --smoke   # 18 rows
+.venv/Scripts/python.exe experiments/run_label_epsilon.py --smoke        # 12 rows; finance confident recall 0.75 @ eps=1 & inf
+.venv/Scripts/python.exe -m pytest tests/ -q                             # 56 passed
+```
+Real grids pending (human — commands in docs/NEXT_EXPERIMENTS.md §5 and §3.3). Smoke
+numbers are synthetic sanity only, NOT paper numbers (tiny n inflates false_flag).
+
+### V19 — real-data analysis of items 3.2 & 3.3; item 2.3 NOT done (2026-08-26)
+Human ran the real grids. Analyzers added: `experiments/analyze_threshold_transfer.py`
+(figT1 + threshold_transfer_summary.csv) and `experiments/analyze_label_epsilon.py`
+(figE1 + label_epsilon_summary.csv). Numbers in FINDINGS Findings 11–12:
+- **3.2 (Finding 11):** recall transfers (own 0.69 vs transferred 0.67) but clean false-flag
+  does NOT — healthcare's threshold applied to finance/government → false-flag 0.98/1.00;
+  mean 0.22 (own) → 0.44 (transferred). Thresholds are not portable.
+- **3.3 (Finding 12):** confident detector DP-robust — recall finance 0.63→0.57 (ε=∞→0.1),
+  healthcare/government hold 1.00 to ε=0.1 (vs divergence detector's ε=0.1 blowup, Finding 3).
+  Clean self-disagreement std finance 0.0073 / gov 0.0016 / hc 0.0013 → 0.05 threshold safely
+  calibrated. Open: rigorous DP accounting (3.3-i).
+- **2.3 κ NOT done:** `taxonomy_sample_human_labels.csv` is BLANK (0/30 mode+detectability
+  filled); `taxonomy_agreement.txt` shows κ=0.000 / all-nan confusion — an empty-file artifact,
+  NOT a result. The human must code the 30 incidents (blind) before κ is meaningful. Not
+  fabricated. 56 tests still pass; src/gate untouched.
+
+### V20 — Pillar A κ, real (2026-08-26)
+The human worksheet docs/taxonomy_sample_for_human_review.md was already filled (30/30
+valid codings); those were transcribed VERBATIM (regex parse — no values invented) into
+experiments/results/taxonomy_sample_human_labels.csv, then:
+```bash
+.venv/Scripts/python.exe experiments/code_agreement.py
+```
+Outcome (taxonomy_agreement.txt): mode percent-agreement 0.233 / Cohen's κ 0.082;
+detectability agreement 0.333 / κ 0.038 (both ~chance — machine over-assigns
+distributional 14/30 vs human 6, and partial 24/30 vs 9). Filter precision 0.933 (human
+judged 28/30 ARE data-readiness failures). Honest negative on fine coding → FINDINGS
+Finding 13: claim filter precision only, not fine proportions/12%. Intra-rater pass still
+pending. AI did NOT author any human label (transcription only, from the human-filled .md).
+
+### V21 — paper draft + 3 citation verifications (2026-11-03)
+Verified via Crossref/source and graduated TODO-VERIFY -> VERIFIED-FETCH in refs.bib:
+`dwork2014` (DOI 10.1561/0400000042, FnT TCS 9(3-4):211-487, 2014), `jensenshannon`
+(Lin, DOI 10.1109/18.61115, IEEE TIT 37(1):145-151, 1991), `greatexpectations`
+(github.com/great-expectations/great_expectations, Apache-2.0).
+Wrote `paper/main.tex` (arXiv preprint draft, sole author). Validated: 23 \cite keys all
+resolve in refs.bib and NONE are TODO-VERIFY; all 5 \includegraphics figures exist.
+No local LaTeX toolchain to compile. FedCheck (prior, unpublished) and TFDV (omitted for
+packaging) are referenced in prose with no \cite — no fabricated bib details. Every number
+is quoted from docs/FINDINGS.md / experiments/results/*.csv (hard rule 1); 3.3-(i) DP
+accounting is folded into §Privacy-utility as "approximate", not overclaimed.
+
+### V22 — arXiv-review revision + intra-rater scaffolding (2026-11-03)
+Paper (`paper/main.tex`) revised against an external arXiv-readiness review and
+recompiled clean (0 undefined citations, 0 undefined refs; 10 pages):
+- Figures regenerated without internal "Item N:" titles and without the gray
+  `fig.text` provenance footnotes (edited `experiments/analyze.py`,
+  `analyze_aggregation.py`, `analyze_label_epsilon.py`, `analyze_threshold_transfer.py`);
+  provenance consolidated into the paper's Reproducibility paragraph.
+- Title de-emphasizes the taxonomy; `\date` no longer says "Draft"; author email set
+  to gargi.desai20@gmail.com and ORCID 0009-0007-9491-2949 added.
+- 0.34-vs-41% reconciled in prose as two denominators (mean-rate difference vs 74/180
+  cells; 74/180 quoted from FINDINGS Finding 2 line "74 of 180 (41%)").
+- DP claim softened to "DP-style"/"approximate"; "DP-robust" scoped to empirical recall.
+- NIST MEASURE mapping added as a body TABLE, transcribed from docs/NIST_MAPPING.md.
+Citations verified by fetching (hard rule 2) and written into refs.bib:
+- `northcutt2021confidentlearning` ADDED + cited (JAIR vol. 70, 2021; DOI
+  10.1613/jair.1.12125; arXiv:1911.00068) — JAIR + arXiv pages.
+- `mimiciv` full 13-author list from Crossref (DOI 10.1038/s41597-022-01899-x,
+  published 2023); TODO-VERIFY note removed.
+- `paeth2024aiid` full 5-author list from arXiv:2409.16425; TODO-VERIFY note removed.
+- `nistairmf2023` MEASURE subcategory IDs (1.1,1.3,2.1,2.3,2.5,2.8,2.10,2.11,2.13,3.1)
+  re-confirmed present in the official NIST AI 100-1 PDF (pypdf text extraction);
+  MEASURE 2 = 2.1–2.13. Stale "Session 4" note removed.
+Intra-rater reliability scaffolding built (NOT yet run on data):
+- `experiments/make_pass2_worksheet.py` → `docs/taxonomy_sample_pass2_blind.md`
+  (30 incidents, pass-1 labels stripped, reshuffled seed=202; verified 60 blank
+  fields, 0 filled).
+- `experiments/code_agreement.py --intra` added: compares pass1 vs
+  `taxonomy_sample_human_labels_pass2.csv`, writes a SEPARATE
+  `taxonomy_agreement_intra.txt` (inter-rater `taxonomy_agreement.txt` untouched);
+  inter-rater path regression-checked (mode agr 0.233, det 0.333, filter 0.933 —
+  unchanged).
+- INTRA-RATER κ IS PENDING: it requires a human blind pass-2 coding after a washout.
+  No κ number has been written to FINDINGS or §5.6; §5.6 still correctly says "an
+  intra-rater pass is future work" until the real pass-2 exists. AI authors no labels.
+
+### V23 — intra-rater κ computed on the human pass-2 (2026-11-03)
+Human completed the blind pass-2 coding (docs/taxonomy_sample_pass2_blind.md), transcribed
+via `make_pass2_worksheet.py --transcribe` to
+`experiments/results/taxonomy_sample_human_labels_pass2.csv`, then:
+    .venv/Scripts/python.exe experiments/code_agreement.py --intra
+Outcome (quoted from `taxonomy_agreement_intra.txt`, n=30 coded in both passes):
+  assigned mode — percent agreement 0.100, Cohen's κ = -0.048;
+  detectability  — percent agreement 0.233, Cohen's κ = -0.144.
+Both κ are at/below chance: the same coder does NOT reproduce their own fine codings after a
+washout. Interpretation (honest negative, strengthens §5.6): the fine mode/detectability
+scheme is intrinsically unstable, not merely a machine-vs-human artifact — so the paper relies
+only on the coarse human-validated filter precision (0.93), not the fine proportions.
+Written to docs/FINDINGS.md (Finding 13 addendum) and paper §5.6 parenthetical (mode κ≈-0.05,
+detectability κ≈-0.14); paper recompiled clean (0 undefined cites/refs, 10 pp.). The
+INTER-rater result (taxonomy_agreement.txt: mode κ 0.082, det κ 0.038, filter 0.933) was NOT
+modified. AI computed the statistic from human-authored labels; AI authored no labels.

@@ -41,6 +41,8 @@ import matplotlib
 matplotlib.use("Agg")  # headless, deterministic
 import matplotlib.pyplot as plt  # noqa: E402
 
+from ci_utils import per_seed_means, bootstrap_ci  # noqa: E402  (experiments/ on sys.path[0])
+
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "experiments" / "results"
 FIGDIR = ROOT / "paper" / "figures"
@@ -319,18 +321,26 @@ def fig_detection_action_gap(df: pd.DataFrame) -> None:
     of privacy noise."""
     sub = df[(df["mode"] != "none") & np.isinf(df["epsilon"])].copy()
     sub["withheld_frac"] = sub["degraded_withheld"] / N_DEGRADED
-    det = sub.groupby("mode")["det_recall"].mean().reindex(MODES)
-    act = sub.groupby("mode")["withheld_frac"].mean().reindex(MODES)
-    det_all, act_all = sub["det_recall"].mean(), sub["withheld_frac"].mean()
+
+    # per-mode + overall means with a seed-level bootstrap 95% CI (whiskers)
+    d, a, d_err, a_err = [], [], [[], []], [[], []]
+    groups = [(m, sub[sub["mode"] == m]) for m in MODES] + [("ALL", sub)]
+    for _, g in groups:
+        dm, dlo, dhi = bootstrap_ci(per_seed_means(g, "det_recall"))
+        am, alo, ahi = bootstrap_ci(per_seed_means(g, "withheld_frac"))
+        d.append(dm); a.append(am)
+        d_err[0].append(dm - dlo); d_err[1].append(dhi - dm)
+        a_err[0].append(am - alo); a_err[1].append(ahi - am)
+    det_all, act_all = d[-1], a[-1]
 
     fig, ax = plt.subplots(figsize=(9.5, 4.8))
     x = np.arange(len(MODES) + 1)
     labels = [MODE_SHORT[m] for m in MODES] + ["ALL\n(mean)"]
-    d = list(det.values) + [det_all]
-    a = list(act.values) + [act_all]
     w = 0.38
-    ax.bar(x - w / 2, d, w, label="detected (a check fired)", color="#0072B2")
-    ax.bar(x + w / 2, a, w, label="withheld (gate excluded it)", color="#E69F00")
+    ax.bar(x - w / 2, d, w, yerr=d_err, capsize=3, ecolor="#333",
+           error_kw={"lw": 1}, label="detected (a check fired)", color="#0072B2")
+    ax.bar(x + w / 2, a, w, yerr=a_err, capsize=3, ecolor="#333",
+           error_kw={"lw": 1}, label="withheld (gate excluded it)", color="#E69F00")
     for i in range(len(x)):
         gap = d[i] - a[i]
         ax.annotate("", xy=(x[i] + w / 2, a[i]), xytext=(x[i] + w / 2, d[i]),
@@ -345,15 +355,7 @@ def fig_detection_action_gap(df: pd.DataFrame) -> None:
                  "withholds", fontsize=12.5)
     ax.legend(loc="upper center", ncol=2, fontsize=9)
     fig.subplots_adjust(bottom=0.2)
-    fig.text(0.5, -0.11,
-             "Aggregated over all 3 domains at ε=∞. Overall the gate DETECTS "
-             f"{det_all:.2f} of degraded sources but WITHHOLDS only {act_all:.2f} — "
-             f"a {det_all - act_all:.2f} gap that persists in every mode except structural.\n"
-             "Mechanism: readiness = 0.4·check-pass-rate + 0.3·schema + 0.3·divergence, "
-             "READY at ≥0.8, so one failed check among ~15 (pass-rate 1.00→0.93) is averaged "
-             "away and the source still scores READY.\n"
-             "Source: crossdomain_*.csv (det_recall vs degraded_withheld); rule: src/gate/readiness.py.",
-             ha="center", fontsize=8.5)
+    # (provenance/annotation moved to the paper's Reproducibility paragraph)
     _save(fig, "fig6_detection_action_gap")
 
 
@@ -371,6 +373,16 @@ def write_summary(df: pd.DataFrame) -> Path:
         withheld_frac_mean=("withheld_frac", "mean"),
         auc_delta_mean=("auc_delta", "mean"),
     ).reset_index()
+
+    # seed-level bootstrap 95% CIs for the two headline rates
+    ci_rows = []
+    for (dom, mode, eps), grp in g:
+        _, rlo, rhi = bootstrap_ci(per_seed_means(grp, "det_recall"))
+        _, wlo, whi = bootstrap_ci(per_seed_means(grp, "withheld_frac"))
+        ci_rows.append({"domain": dom, "mode": mode, "epsilon": eps,
+                        "det_recall_ci_lo": round(rlo, 4), "det_recall_ci_hi": round(rhi, 4),
+                        "withheld_frac_ci_lo": round(wlo, 4), "withheld_frac_ci_hi": round(whi, 4)})
+    summ = summ.merge(pd.DataFrame(ci_rows), on=["domain", "mode", "epsilon"], how="left")
 
     # clean-data false-flag rate (mode=none) joined per (domain, epsilon)
     none = df[df["mode"] == "none"].groupby(["domain", "epsilon"])[
@@ -391,6 +403,8 @@ def write_summary(df: pd.DataFrame) -> Path:
         "# one row per (domain, mode, epsilon); means over the 5 seeds x 3 severities in each grid cell",
         "# det_* = per-mode detection over the 2 degraded sources; withheld_frac = degraded_withheld/2 "
         "(gate ACTION); clean_false_flag_rate from mode=none rows; auc_delta = downstream (gate - no-gate)",
+        "# *_ci_lo/hi = seed-level percentile bootstrap 95% CI (10k resamples, seed=42) for det_recall "
+        "and withheld_frac",
     ]
     with open(out, "w", encoding="utf-8", newline="") as f:
         for line in header:

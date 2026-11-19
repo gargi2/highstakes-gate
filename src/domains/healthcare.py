@@ -4,7 +4,7 @@ Synthetic path reuses FedCheck's MIMIC-like generator (`gate.partition.
 make_synthetic_clinical`) so tests/smoke never touch restricted rows. Real path
 reads a de-identified public health table via --data-root (a CSV whose columns
 match `required_columns`); MIMIC-IV under a PhysioNet DUA is read-only and must
-be pointed to locally by the human, never uploaded (CLAUDE.md).
+be pointed to locally by the human, never uploaded (CONVENTIONS.md).
 
 Task: in-hospital mortality (binary) from a small tabular feature set.
 """

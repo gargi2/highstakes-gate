@@ -1,0 +1,13 @@
+# Item 3.2 cold threshold-transfer summary — from threshold_transfer.csv
+# Reproduce: .venv/Scripts/python.exe experiments/analyze_threshold_transfer.py (git=827c0d9)
+# own=True is the diagonal (domain's own calibrated threshold); seed-level bootstrap 95% CIs
+target_domain,threshold_source,own,det_recall,det_recall_ci_lo,det_recall_ci_hi,false_flag_rate,false_flag_ci_lo,false_flag_ci_hi
+healthcare,healthcare,True,0.3333,0.3333,0.3333,0.0,0.0,0.0
+healthcare,finance,False,0.0,0.0,0.0,0.0,0.0,0.0
+healthcare,government,False,0.0,0.0,0.0,0.0,0.0,0.0
+finance,healthcare,False,1.0,1.0,1.0,0.9833,0.95,1.0
+finance,finance,True,0.7333,0.6667,0.8,0.0,0.0,0.0
+finance,government,False,1.0,1.0,1.0,0.0,0.0,0.0
+government,healthcare,False,1.0,1.0,1.0,1.0,1.0,1.0
+government,finance,False,1.0,1.0,1.0,0.6667,0.6667,0.6667
+government,government,True,1.0,1.0,1.0,0.6667,0.6667,0.6667

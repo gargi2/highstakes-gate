@@ -72,7 +72,7 @@ that is exercised implicitly whenever sources disagree.)
 # fast dev/CI check (all three domains, synthetic, <2 min)
 .venv/Scripts/python.exe experiments/run_crossdomain.py --smoke
 
-# the exact real-extraction + full-grid commands (printed, not run by the assistant)
+# the exact real-extraction + full-grid commands (printed, not run automatically)
 .venv/Scripts/python.exe experiments/run_crossdomain.py --print-commands
 ```
 

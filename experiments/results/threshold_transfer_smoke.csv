@@ -1,0 +1,25 @@
+# Cold cross-domain threshold transfer (NEXT_EXPERIMENTS item 5 / 3.2)
+# Reproduce: .venv/Scripts/python.exe experiments/run_threshold_transfer.py --smoke
+# git=6bb0ffa seeds=2 n_sources=5 n_degraded=2 n_rows=800 max_rows=2000
+# distributional detection at eps=inf; threshold_source supplies its divergence_threshold, applied to target_domain data (diagonal = own threshold).
+# det_recall over degraded sources; false_flag_rate over clean sources in the same cell
+# columns: target_domain,threshold_source,threshold_value,severity,seed,det_recall,false_flag_rate,n_degraded,n_clean
+target_domain,threshold_source,threshold_value,severity,seed,det_recall,false_flag_rate,n_degraded,n_clean
+healthcare,healthcare,0.026,high,0,1.0,1.0,2,3
+healthcare,finance,0.055,high,0,1.0,0.0,2,3
+healthcare,government,0.045,high,0,1.0,0.0,2,3
+healthcare,healthcare,0.026,high,1,1.0,1.0,2,3
+healthcare,finance,0.055,high,1,1.0,0.3333,2,3
+healthcare,government,0.045,high,1,1.0,1.0,2,3
+finance,healthcare,0.026,high,0,1.0,1.0,2,3
+finance,finance,0.055,high,0,1.0,1.0,2,3
+finance,government,0.045,high,0,1.0,1.0,2,3
+finance,healthcare,0.026,high,1,1.0,1.0,2,3
+finance,finance,0.055,high,1,1.0,1.0,2,3
+finance,government,0.045,high,1,1.0,1.0,2,3
+government,healthcare,0.026,high,0,1.0,1.0,2,3
+government,finance,0.055,high,0,1.0,1.0,2,3
+government,government,0.045,high,0,1.0,1.0,2,3
+government,healthcare,0.026,high,1,1.0,1.0,2,3
+government,finance,0.055,high,1,1.0,1.0,2,3
+government,government,0.045,high,1,1.0,1.0,2,3

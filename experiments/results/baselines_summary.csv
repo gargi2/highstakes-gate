@@ -1,0 +1,50 @@
+# Item 6 baseline-vs-gate summary — from baselines_detection.csv + crossdomain_*.csv
+# Reproduce: .venv/Scripts/python.exe experiments/analyze_baselines.py (git=6bb0ffa)
+# baselines that ran: ['great_expectations', 'deequ']; absent: ['tfdv']
+# det_recall over degraded sources; false_flag_rate on mode=none (clean); severity=high, eps=inf
+domain,mode,series,det_recall,false_flag_rate
+healthcare,structural,gate,1.0,
+healthcare,completeness,gate,1.0,
+healthcare,distributional,gate,1.0,
+healthcare,label,gate,1.0,
+healthcare,none,gate,,0.0
+finance,structural,gate,1.0,
+finance,completeness,gate,1.0,
+finance,distributional,gate,0.8,
+finance,label,gate,0.0,
+finance,none,gate,,0.0
+government,structural,gate,1.0,
+government,completeness,gate,1.0,
+government,distributional,gate,1.0,
+government,label,gate,1.0,
+government,none,gate,,0.0
+healthcare,structural,great_expectations,1.0,
+healthcare,completeness,great_expectations,1.0,
+healthcare,distributional,great_expectations,1.0,
+healthcare,label,great_expectations,1.0,
+healthcare,none,great_expectations,,0.3333
+finance,structural,great_expectations,1.0,
+finance,completeness,great_expectations,1.0,
+finance,distributional,great_expectations,1.0,
+finance,label,great_expectations,0.2,
+finance,none,great_expectations,,0.0667
+government,structural,great_expectations,1.0,
+government,completeness,great_expectations,1.0,
+government,distributional,great_expectations,1.0,
+government,label,great_expectations,1.0,
+government,none,great_expectations,,0.0
+healthcare,structural,deequ,1.0,
+healthcare,completeness,deequ,1.0,
+healthcare,distributional,deequ,1.0,
+healthcare,label,deequ,0.0,
+healthcare,none,deequ,,0.0
+finance,structural,deequ,1.0,
+finance,completeness,deequ,1.0,
+finance,distributional,deequ,1.0,
+finance,label,deequ,0.0,
+finance,none,deequ,,0.0
+government,structural,deequ,1.0,
+government,completeness,deequ,1.0,
+government,distributional,deequ,1.0,
+government,label,deequ,0.0,
+government,none,deequ,,0.0

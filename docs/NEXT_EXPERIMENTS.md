@@ -4,8 +4,8 @@ Prioritized after **verifying each blocker against the committed CSVs** (see
 `docs/FINDINGS.md` and `verification/VERIFICATION.md` V8). Ordering is by
 value-per-effort for a submittable **detectability-boundary** paper. Items 1–2 are
 gating: until they run, the downstream story and the label story are not yet
-defensible. Heavy grids are run by the human (CLAUDE.md hard rule 4); the assistant
-drafts and smoke-tests the code first.
+defensible. Heavy grids are run by the author (CONVENTIONS.md hard rule 4); the code
+is drafted and smoke-tested first.
 
 Status legend: 🔴 blocks submission · 🟡 strengthens · 🟢 polish.
 
@@ -106,43 +106,138 @@ but the frame cache reads each extract once):
   --data-root government=data/PGYR2025_P06302026_06032026
 .venv/Scripts/python.exe experiments/analyze_label_detector.py
 ```
-**Still open:** (i) a rigorous DP analysis of the CV-derived disagreement statistic
-(module ships an approximate `epsilon` option, flagged); (ii) an ε-sweep of the
-confident detector for the privacy–utility story; (iii) per-domain threshold
-calibration on clean sources (finance is the sensitive one).
+**Still open (3.3):** (i) a rigorous DP analysis of the CV-derived disagreement statistic
+(analysis/writing — module ships an approximate `epsilon` option, flagged); (ii) ε-sweep +
+(iii) per-domain clean-disagreement calibration are now BUILT in
+`experiments/run_label_epsilon.py` (V18). Human runs the real grid:
+```bash
+.venv/Scripts/python.exe experiments/run_label_epsilon.py --seeds 5 --max-rows 40000 \
+  --data-root healthcare=data/healthcare --data-root finance=data \
+  --data-root government=data/PGYR2025_P06302026_06032026
+```
+Report confident-detector recall vs ε (does it survive DP noise?) and `clean_disagree_std`
+per domain (the calibration basis for the 0.05 threshold; finance is the sensitive one).
 
-## 4. 🟡 Ablate the aggregation rule (the spine's "fix")
-**Directly tests the paper's spine (Finding 2 — the 0.34 detection–action gap).**
+## 4. ✅ DONE (real data + analyzed) — Ablate the aggregation rule (the spine's "fix")
+**Result (Finding 9):** `any_critical` closes the gap to 0.000 on finance/government at
+**zero clean-FPR for ε≥0.5**, but clean-FPR hits **0.878 at ε=0.1** — the fix is
+DP-noise-fragile (privacy↔aggregation tradeoff). `max_violation` only partial.
+Figures figA1/figA2, `aggregation_summary.csv`. Analyzer: `analyze_aggregation.py`.
 
-In `src/gate/readiness.py`, compare decision rules on the *same* reports:
-- current **weighted mean** (0.4/0.3/0.3, READY≥0.8);
-- **max-violation** (worst subscore drives the decision);
-- **any-critical-fails** (any schema/null-critical check → EXCLUDE).
+**Directly tests the paper's spine (Finding A — the 0.34 detection–action gap).**
+Built as an additive extension; the frozen gate (`src/gate/`) is untouched
+(`git diff src/gate/` empty).
 
-Report, per rule: the detection–action gap, `degraded_withheld`, **and** the clean
-false-positive rate. The claim to support: max-violation / any-critical closes the
-gap **without** an FPR explosion — i.e. the masking is a fixable design choice, not
-inherent. Do NOT tune thresholds on the outcome (leakage; keep the sensitivity
-analysis the file's docstring already promises).
+- `src/domains/aggregation.py::decide` — three rules on the SAME reports:
+  **weighted_mean** (= `score_source` verbatim, the reference), **max_violation**
+  (worst-of-three-subscores), **any_critical** (any single failed check → EXCLUDE).
+- `experiments/run_aggregation_ablation.py` — per rule: `det_recall` (rule-independent
+  detection), `action_rate` (decision≠READY), `gap = det_recall−action_rate`,
+  `clean_fpr` (clean sources not marked READY). One CSV per domain.
+- `tests/test_aggregation.py` — 6 tests; incl. `weighted_mean`≡`score_source`, and the
+  two-layer-masking property (a single failed check hidden in pass_rate=0.93 escapes
+  both weighted_mean AND max_violation, but not any_critical).
 
-## 5. 🟡 Cold threshold transfer (the industry-agnostic claim)
-- Calibrate `divergence_threshold` on **one** domain, apply **unchanged** to the
-  other two; measure the detection/FPR cost vs each domain's own calibrated value.
-- If thresholds don't transfer (expected from the σ=0.34 distributional spread),
-  **quantify the retuning cost** — still a result, and the honest form of the
-  cross-domain claim.
+**Smoke evidence (synthetic — not paper numbers):** mean gap (degraded) / clean_fpr
+(mode=none) per rule — healthcare 0.250/0.000 → 0.250/0.000 → 0.000/0.100; finance
+0.500/0.000 → 0.000/0.000 → 0.000/0.000; government 0.750/0.000 → 0.500/0.000 →
+0.000/0.000 (weighted_mean → max_violation → any_critical). `max_violation` partially
+closes the gap; `any_critical` fully closes it at a small FPR cost — the "fixable
+design choice" story, to confirm on real data. No threshold tuned on the outcome
+(rules fixed a priori; gate thresholds reused).
 
-## 6. 🟡 Baselines (avoid desk-reject)
+**The human runs the real grid:**
+```bash
+.venv/Scripts/python.exe experiments/run_aggregation_ablation.py --seeds 5 --max-rows 40000 \
+  --data-root healthcare=data/healthcare --data-root finance=data \
+  --data-root government=data/PGYR2025_P06302026_06032026
+```
+Then report, per rule/domain: the gap at ε=∞ and the clean_fpr, and whether
+max_violation / any_critical close the gap **without** an FPR explosion. (Analyzer +
+figure deferred until the real CSVs exist, to avoid plotting synthetic smoke.)
+
+## 5. ✅ DONE (real + analyzed) — Cold threshold transfer (3.2)
+**Result (Finding 11):** recall transfers (own 0.69 vs transferred 0.67) but clean
+false-flag does NOT — healthcare's tight threshold on finance/government → 0.98/1.00.
+Thresholds not portable; retuning cost = false positives. figT1, `threshold_transfer_summary.csv`.
+Analyzer: `analyze_threshold_transfer.py`. (Runner below.)
+
+### (runner)
+`experiments/run_threshold_transfer.py` — calibrate `divergence_threshold` on one
+domain, apply unchanged to the others; per (target × threshold-source): distributional
+det_recall + clean false_flag (diagonal = own threshold). Smoke-tested (V18). Human runs:
+```bash
+.venv/Scripts/python.exe experiments/run_threshold_transfer.py --seeds 5 --max-rows 40000 \
+  --data-root healthcare=data/healthcare --data-root finance=data \
+  --data-root government=data/PGYR2025_P06302026_06032026
+```
+Report the 3×3 recall/false_flag matrix; the off-diagonal retuning cost is the honest
+form of the cross-domain claim (expected non-transfer from σ=0.34).
+
+## 6. ✅ DONE (GE + Deequ real + analyzed; TFDV omitted) — Baselines
+**Result (Finding 10):** GE + Deequ both tie the gate at 1.0 on structural/completeness.
+Precision↔recall split: Deequ 0.000 clean false-flag but 0.0 on label (no label
+constraint); GE catches rare-label but false-flags (hc 0.333); the gate has both. **All
+three miss balanced-finance label** (0.0/0.2/0.0) — the confident-learning detector
+(Finding 8) is the only thing that catches it (0.63). Figure figBL (3 series),
+`baselines_summary.csv`. Analyzer: `analyze_baselines.py`. **TFDV omitted** (packaging;
+footnote it). Ran headless via the Docker command above. **Still pending:** get TFDV + Deequ (they need Python ≤3.11; Colab is 3.13, Kaggle 3.12).
+Reliable path is the headless runner `experiments/baselines/run_baselines.py` in a
+py3.11 Docker container (from repo root, Docker Desktop running):
+```powershell
+docker run --rm -v "${PWD}:/repo" -w /repo python:3.11-slim bash -lc "apt-get update && apt-get install -y default-jre-headless >/dev/null && pip install great_expectations==0.18.19 pydeequ pyspark==3.5.1 && SPARK_VERSION=3.5 python experiments/baselines/run_baselines.py"
+```
+Notes: **pydeequ needs Spark 3.5/3.3/3.2 (NOT 3.4)** — hence pyspark==3.5.1 +
+SPARK_VERSION=3.5. This command gives GE+Deequ (two baseline families). **TFDV is
+omitted** — its `apache-beam[gcp]` dep makes pip backtrack through the whole
+google-cloud SDK and it fights py3.11; footnote it as omitted for packaging, or add
+`(pip install 'apache-beam[gcp]==2.53.0' tensorflow-data-validation==1.15.1 || echo skip) &&`
+before the run to attempt it non-fatally.
+Writes `experiments/results/baselines_detection.csv` (all three), then re-run
+`analyze_baselines.py`. Synthetic only (no data/ read). Grid skips any baseline that
+fails to import; check the "baselines with results" line it prints.
+
 Run **TFDV**, **Deequ**, and **Great Expectations** defaults on the same degraded
 sources; report per-mode detection vs the gate. Framing: the contribution is the
 DP-private + cross-source + readiness-decision layer, **not** raw check novelty —
 baselines make that precise.
 
-## 7. 🟢 Confidence intervals (the grid already has 5 seeds)
-Add bootstrap / across-seed **95 % CIs** to every headline number and error bars to
-every figure in `experiments/analyze.py`. No new runs needed — the seeds exist.
+- `experiments/baselines/gen_baseline_sources.py` — regenerates the gate's EXACT
+  per-cell sources (same seeds/splits/degrade as `run_crossdomain`), so baselines
+  validate byte-identical inputs. `tests/test_baseline_sources.py` (5 tests) guards it.
+- `experiments/baselines/baselines_colab.ipynb` — installs GE (pinned 0.18.19) +
+  TFDV + Deequ (pydeequ/Spark), runs each baseline's default checks per source,
+  writes `experiments/results/baselines_detection.csv` (per-mode `det_recall` +
+  `false_flag_rate`, aligned with the gate), and prints a gate-vs-baseline table.
 
-## 8. 🟢 Pillar A — run the reliability pass that already exists
+**Why Colab:** TFDV/Deequ don't run on the author's Windows box (TFDV is Linux-wheel
+only; Deequ needs a JVM). The notebook defaults to **synthetic** data — healthcare
+MUST stay synthetic (MIMIC DUA); finance/government public extracts are optional via
+`DATA_ROOT`. **The baseline cells are not pre-run** — expect minor GE/Deequ
+API fixups on first run. Expected finding: baselines match the gate on
+structural/completeness (no raw-check-novelty claim) and fall behind on
+distributional/label — the latter is the symmetric-flip blind spot that Finding D's
+confident-learning detector closes.
+**Human:** open the notebook in Colab, set `REPO_URL`, Run all, copy
+`baselines_detection.csv` back into `experiments/results/`.
+
+## 7. ✅ DONE — Confidence intervals (the grid already has 5 seeds)
+Shared helper `experiments/ci_utils.py` (seed-level percentile bootstrap, 10k resamples,
+seed=42). Wired into: **fig6** (spine — error bars + the gap CI in-caption), **figA1**
+(ablation gap), **figBL** (baselines), and CI columns (`det_recall_ci_*`,
+`withheld_frac_ci_*`) in `metrics_summary.csv`. Headline result:
+**detect 0.76 [0.74,0.76], withhold 0.42, gap 0.34 (95% CI [0.32, 0.35])** — the spine
+excludes 0 by a wide margin. No new runs (used the existing 5 seeds).
+Optional extension: error bars on fig2/fig3/fig4 too (bar/line figures) — same helper.
+
+## 8. ✅ DONE (real κ — an honest negative) — Pillar A reliability pass
+**Result (Finding 13):** human codings were transcribed from the filled worksheet
+`docs/taxonomy_sample_for_human_review.md` into the CSV; `code_agreement.py` gives
+**mode κ 0.082, detectability κ 0.038** (near chance — fine coding NOT reliable; machine
+over-assigns distributional/partial) but **filter precision 0.933** (coarse screen IS
+reliable). Paper implication: claim the filter precision, not the fine proportions/12%.
+**Still pending (human):** an intra-rater blind second pass for the within-coder κ.
+
 The IRR pipeline is built (`experiments/code_agreement.py`: seeded 30-incident
 sample, Cohen's κ on mode **and** detectability, filter precision, machine coding as
 a 2nd annotator). It is **unrun** only because the human labels file is a template.
@@ -171,7 +266,7 @@ done), and defend every cell — one wrong mapping sinks the whole crosswalk.
 - **Data licenses (verify, don't assume):** SEC EDGAR = U.S. Gov public domain (OK);
   CMS Open Payments = federal Open Data (derived publication OK — confirm the current
   data-use notice); MIMIC-IV = PhysioNet **DUA, aggregate-only** (already enforced —
-  no rows in prompts/outputs, CLAUDE.md). Confirm in writing before any extract text
+  no rows in prompts/outputs, CONVENTIONS.md). Confirm in writing before any extract text
   or row-derived number enters the paper.
 - **Petition framing:** any brief citing this work must carry the
   measurement-and-assurance framing; "the gate did not improve accuracy" without it

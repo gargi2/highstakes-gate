@@ -1,7 +1,7 @@
-"""Verification tests for privacy.py — hand-computable, not AI-trusted.
+"""Verification tests for privacy.py — hand-computable, independently checkable.
 
 These tests verify the STATISTICAL PROPERTIES of the noise, which is the
-part AI-generated code most often gets subtly wrong (wrong scale, wrong
+part DP code most often gets subtly wrong (wrong scale, wrong
 sensitivity, epsilon applied per-release vs per-bin).
 
 Run: pytest tests/test_privacy.py -v

@@ -92,8 +92,9 @@ READY" observation from FedCheck — one phenomenon, not two loose ends).
 **Aggregated over all three domains at ε=∞** (`crossdomain_*.csv`,
 `det_recall` vs `degraded_withheld/2`):
 
-- the gate **detects 0.76** of degraded sources but **withholds only 0.42** — a
-  **0.34 gap**;
+- the gate **detects 0.76** (95% CI [0.74, 0.76]) of degraded sources but
+  **withholds only 0.42** — a **0.34 gap (95% CI [0.32, 0.35]**, seed-level bootstrap,
+  10k resamples); the CI excludes 0 by a wide margin, so the gap is real, not seed noise;
 - **74 of 180 degraded cells (41 %)** are *detected-but-not-withheld*;
 - the gap is **0.00 for structural** (schema-incompatible → hard EXCLUDE) but
   **0.44–0.56 for completeness/distributional/label**.
@@ -291,6 +292,171 @@ positives barely changes anything. A rigorous DP analysis of a CV-derived statis
 is future work (the module ships an approximate `epsilon` option, flagged as such).
 **Run for the paper:** the human runs `run_label_detector.py` on real data (command
 in `docs/NEXT_EXPERIMENTS.md` §3); `analyze_label_detector.py` then draws figL1/L2.
+
+## Finding 9 — The spine is a FIXABLE rule choice — but the fix trades DP-robustness
+
+Quoted from `aggregation_summary.csv` (real data, `run_aggregation_ablation.py` →
+`analyze_aggregation.py`); **`paper/figures/figA1_gap_by_rule.png`, figA2**. The gate's
+decision rule is a weighted mean of three subscores (READY≥0.8); Finding 2's gap is
+what that averaging hides. We re-decide the **same reports** under two alternatives —
+`max_violation` (worst subscore) and `any_critical` (any failed check → EXCLUDE) — and
+measure the detection→action gap and the clean false-positive rate.
+
+**Gap (det_recall − withhold rate), ε=∞:**
+
+| Domain | weighted_mean | max_violation | any_critical |
+|---|---|---|---|
+| finance | **0.433** | 0.350 | **0.000** |
+| government | **0.667** | 0.575 | **0.000** |
+| healthcare | −0.083 | −0.083 | −0.250 |
+
+- **`any_critical` closes the gap to 0.000** on the two domains where composite masking
+  bites (finance, government), and `max_violation` is only a *partial* fix — the single
+  failed check hidden inside pass_rate=0.93 escapes it (the two-layer masking).
+- **Healthcare's gap is already ≤0** — its degradations trip *other* checks, so the
+  composite already withholds them (action 0.75 > detection 0.667); the masking is
+  domain/mode-specific, worst on government/finance.
+- **The honest cost — and the real finding (figA2).** Clean false-positive rate by rule
+  × ε (all domains): weighted_mean stays **0.000 at every ε**; `any_critical` is **0.000
+  for ε≥1, 0.011 at ε=0.5, and 0.878 at ε=0.1.** The averaging that *causes* the masking
+  is the same averaging that makes the gate robust to DP noise, so the zero-tolerance fix
+  reintroduces DP sensitivity. **Recommendation:** `any_critical` closes the gap at no
+  clean-FPR cost for **ε≥0.5**; below that, the composite's noise-robustness is worth its
+  masking, or a hybrid is needed. The masking is fixable, but not for free — a
+  privacy↔aggregation tradeoff, not a strict improvement. No threshold was tuned on the
+  outcome (rules fixed a priori; gate thresholds reused).
+
+## Finding 10 — External baselines: the gate's edge is the layer, not the checks
+
+Quoted from `baselines_summary.csv` (`baselines_detection.csv` from the headless Docker
+run, `experiments/baselines/run_baselines.py`, py3.11 + Spark 3.5) + `crossdomain_*.csv`;
+**`paper/figures/figBL_gate_vs_baselines.png`**. **Great Expectations (expectation-style)
+and Deequ (constraint-style) ran; TFDV did not** (its `pyfarmhash`/`apache-beam[gcp]`
+build fails on slim py3.11 — omitted for packaging, not a result). Both baselines used
+**reference-derived** thresholds (GE: existence, not-null, `between` on feature quantiles,
+a label mean-band; Deequ: completeness + feature mean-bands, **no label constraint**) —
+reasonably-tuned, not zero-config.
+
+**Detection recall (severity=high, ε=∞):**
+
+| Mode | gate (hc/fin/gov) | GE (hc/fin/gov) | Deequ (hc/fin/gov) |
+|---|---|---|---|
+| structural | 1.0 / 1.0 / 1.0 | 1.0 / 1.0 / 1.0 | 1.0 / 1.0 / 1.0 |
+| completeness | 1.0 / 1.0 / 1.0 | 1.0 / 1.0 / 1.0 | 1.0 / 1.0 / 1.0 |
+| distributional | 1.0 / 0.8 / 1.0 | 1.0 / 1.0 / 1.0 | 1.0 / 1.0 / 1.0 |
+| label | 1.0 / **0.0** / 1.0 | 1.0 / **0.2** / 1.0 | **0.0 / 0.0 / 0.0** |
+
+**Clean false-flag rate (mode=none):** gate 0.000/0.000/0.000 · GE **0.333**/0.067/0.000 ·
+Deequ 0.000/0.000/0.000.
+
+- **On structural/completeness all three tie at 1.0** — off-the-shelf validators are built
+  for exactly these; **we claim no raw-check novelty**, and this makes that precise.
+- **A precision↔recall split across the two baseline families.** Deequ (constraints) is the
+  most **precise** — 0.000 clean false-flag everywhere — but with a completeness+distribution
+  constraint set it flags **no** label corruption (0.0 all domains). GE (expectations) catches
+  more (rare-label 1.0) but pays a **false-flag cost** (a third of clean healthcare sources).
+  The gate sits at the good corner of both: rare-label recall 1.0 (hc/gov) **and** 0.000
+  clean false-flag.
+- **Nobody catches balanced-label symmetric noise on finance** (gate 0.0, GE 0.2, Deequ 0.0):
+  a symmetric flip moves no marginal, so every threshold/constraint baseline is blind — the
+  exact blind spot the **confident-learning detector (Finding 8)** closes (finance 0.63).
+  This is the paper's point: the contribution is not a better single check, it is the
+  cross-source self-disagreement statistic + the DP-noised operation (Finding 3) + the
+  readiness decision (Finding 9).
+- **Caveats (honest):** Deequ's label 0.0 partly reflects the adapter (no label constraint,
+  symmetric to GE's mean-band would still miss balanced finance); both baselines used tuned
+  thresholds; **TFDV absent** (packaging). `analyze_baselines.py` reports absent baselines as
+  ABSENT and redraws the figure for whatever subset ran.
+
+## Finding 11 — Thresholds do not transfer: recall survives, clean false-flags don't
+
+Quoted from `threshold_transfer_summary.csv` (`run_threshold_transfer.py` →
+`analyze_threshold_transfer.py`); **`paper/figures/figT1_threshold_transfer.png`**. We
+calibrate the distributional `divergence_threshold` on one domain and apply it, unchanged,
+to another (distributional mode, ε=∞).
+
+**Detection recall** (row=target, col=threshold-source):
+
+| target ↓ / thr → | finance | government | healthcare |
+|---|---|---|---|
+| finance | 0.73 | 1.00 | 1.00 |
+| government | 1.00 | 1.00 | 1.00 |
+| healthcare | 0.00 | 0.00 | 0.33 |
+
+**Clean false-flag** (same layout): finance 0.00/0.00/**0.98** · government 0.67/0.67/**1.00** ·
+healthcare 0.00/0.00/0.00.
+
+- **Recall is roughly portable** — mean 0.69 with a domain's own threshold vs 0.67 transferred.
+- **The cost lands on precision:** applying **healthcare's tight threshold** to finance/government
+  drives the clean false-flag rate to **0.98 / 1.00** — nearly every clean source flagged. Mean
+  clean false-flag is 0.22 (own) → **0.44 (transferred)**.
+- **So thresholds are NOT portable**; the "industry-agnostic" claim must be stated as *each domain
+  needs its own clean-source calibration*, and the retuning cost is a false-positive explosion, not
+  a recall loss. Quantifies Finding F (σ=0.34). (Government's own-threshold false-flag 0.67 is
+  itself high — its distributional detector is precision-limited even in-domain, consistent with
+  fig3's ~0.56 government precision cap.)
+
+## Finding 12 — The confident-learning detector is DP-robust (and its threshold is calibrated)
+
+Quoted from `label_epsilon_summary.csv` (`run_label_epsilon.py` →
+`analyze_label_epsilon.py`); **`paper/figures/figE1_confident_epsilon.png`**. ε-sweep of the DP
+budget on the self-disagreement statistic, symmetric label noise.
+
+**Confident-detector recall by ε:**
+
+| Domain | ε=0.1 | 0.5 | 1 | 5 | ∞ |
+|---|---|---|---|---|---|
+| finance | 0.57 | 0.60 | 0.63 | 0.63 | 0.63 |
+| government | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| healthcare | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+
+- **Recall barely degrades under DP:** finance 0.63→0.57 from ε=∞ to ε=0.1; healthcare/government
+  hold **1.00** all the way to ε=0.1. This is the key contrast with Finding 3, where the
+  *divergence* detector's clean false-flag exploded to ≈1.0 at ε=0.1. **The confident-learning
+  detector is the DP-robust label detector** — its statistic is a bounded proportion (sensitivity
+  1/n), so Laplace noise at ε=0.1 is small relative to the ~0.10 clean-vs-noisy gap.
+- **Calibration (3.3-iii):** clean self-disagreement std is tiny — **finance 0.0073**, government
+  0.0016, healthcare 0.0013 — all far below the 0.05 flag threshold, so 0.05 separates clean from
+  noisy with wide margin in every domain (finance, the sensitive one, is widest and still 7× under).
+- **Still open (3.3-i):** a rigorous DP accounting of the CV-derived statistic (the fold-models are
+  treated as post-processing; the released proportion carries the ε). Reported as approximate, not
+  overclaimed.
+
+## Finding 13 — Pillar A reliability: the coarse filter holds, the fine coding does not
+
+Quoted from `taxonomy_agreement.txt` (`code_agreement.py`, n=30 double-coded: machine
+`code_incidents.py` vs an independent human coding transcribed from
+`docs/taxonomy_sample_for_human_review.md`). **This is an honest negative on the
+fine-grained coding — reported, not hidden.**
+
+- **Fine coding is NOT reliable.** Assigned **mode**: percent agreement 0.233, **Cohen's
+  κ = 0.082**; pre-training **detectability**: agreement 0.333, **κ = 0.038** — both at or
+  near chance (Landis–Koch "slight"). Mechanism: the machine coder systematically
+  **over-assigns** `distributional` (14/30 vs the human's 6) and `partial` detectability
+  (24/30 vs 9); that marginal skew collapses κ.
+- **The coarse filter IS reliable.** The human judged **28 of 30** sampled incidents to be
+  genuine data-readiness failures (2 "other") → **filter precision 0.933**. So the automated
+  *is-this-a-data-readiness-failure* screen (`code_incidents.py`) is trustworthy even though
+  the downstream *which-mode / how-detectable* labels are not.
+- **Implication for the paper (scope honestly):** do **not** claim the fine mode proportions
+  or the machine-coded "12% detectable" as a reliable measurement — a second coder does not
+  reproduce them. Claim only (a) the filter precision (0.93, human-validated) and (b) the
+  taxonomy as a *qualitative* organizing frame, with the low κ stated as a limitation.
+  AIID reports are media-derived and root cause is often under-determined, which is exactly
+  why fine coding is subjective; this is consistent with the "undeterminable rate" caveat.
+- **Caveats:** n=30, a single human coder, no adjudication; κ has a wide interval at this n.
+  Future work: coding guidelines + adjudication, or collapsing to the modes the human can
+  reproduce.
+- **Intra-rater pass (DONE) — the fine coding is unstable even within one coder.** A blind
+  re-code of the same 30 incidents by the same coder after a >3-week washout
+  (`taxonomy_agreement_intra.txt`, via `code_agreement.py --intra`; pass-2 from the reshuffled
+  `docs/taxonomy_sample_pass2_blind.md`, seed=202) agrees **no better than chance with pass 1**:
+  **mode** percent agreement 0.100, **Cohen's κ = −0.048**; **detectability** agreement 0.233,
+  **κ = −0.144**. So the near-chance *inter*-rater κ above is **not** merely a machine-vs-human
+  artifact — the fine mode/detectability scheme is intrinsically subjective and not reproducible
+  even by a single rater over time. This *strengthens* the scoping decision: rely only on the
+  human-validated **filter precision (0.93)** and treat the taxonomy as a qualitative frame.
+  (The inter-rater κ above is unchanged; the intra result is written to a separate file.)
 
 ## Reading the figures (for someone new to the area)
 

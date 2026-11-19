@@ -1,0 +1,29 @@
+# Pillar A inter-rater reliability
+n (sampled & double-coded): 30
+
+## Assigned mode
+  percent agreement: 0.233
+  Cohen's kappa:     0.082
+
+## Pre-training detectability
+  percent agreement: 0.333
+  Cohen's kappa:     0.038
+
+## Filter precision (human judged sampled incident IS data-readiness)
+  human 'other' count: 2 / 30
+  filter precision:    0.933
+
+## Mode confusion (rows=machine, cols=human)
+human                     completeness  cross_source  distributional  label  other  provenance_documentation  structural_schema
+machine                                                                                                                        
+completeness                         0             2               1      0      1                         0                  0
+distributional                       2             2               2      2      1                         1                  4
+label                                2             0               0      1      0                         0                  1
+provenance_documentation             1             0               3      0      0                         2                  0
+structural_schema                    0             0               0      0      0                         0                  2
+
+## Detectability confusion (rows=machine, cols=human)
+human    no  partial  yes
+machine                  
+partial   8        8    8
+yes       3        1    2

@@ -1,0 +1,20 @@
+# Item 3.3 confident-detector ε-sweep summary — from label_epsilon_*.csv
+# Reproduce: .venv/Scripts/python.exe experiments/analyze_label_epsilon.py (git=827c0d9)
+# det_recall = confident detector over the corrupted sources; seed-level bootstrap 95% CI;
+# clean_disagree_std = self-disagreement std on undegraded sources (0.05-threshold calibration basis)
+domain,epsilon,det_recall,det_recall_ci_lo,det_recall_ci_hi,clean_disagree_std
+healthcare,0.1,1.0,1.0,1.0,0.0019
+healthcare,0.5,1.0,1.0,1.0,0.0012
+healthcare,1.0,1.0,1.0,1.0,0.0012
+healthcare,5.0,1.0,1.0,1.0,0.0012
+healthcare,inf,1.0,1.0,1.0,0.0012
+finance,0.1,0.5667,0.4333,0.7,0.0109
+finance,0.5,0.6,0.5,0.7333,0.0068
+finance,1.0,0.6333,0.5333,0.7333,0.0064
+finance,5.0,0.6333,0.5333,0.7333,0.0061
+finance,inf,0.6333,0.5333,0.7333,0.0062
+government,0.1,1.0,1.0,1.0,0.0021
+government,0.5,1.0,1.0,1.0,0.0014
+government,1.0,1.0,1.0,1.0,0.0014
+government,5.0,1.0,1.0,1.0,0.0014
+government,inf,1.0,1.0,1.0,0.0014

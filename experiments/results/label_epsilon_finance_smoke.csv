@@ -1,0 +1,11 @@
+# 3.3 confident-detector ε-sweep — domain=finance
+# Reproduce: .venv/Scripts/python.exe experiments/run_label_epsilon.py --smoke
+# git=6bb0ffa seeds=2 n_sources=6 n_degraded=2 n_rows=1200 max_rows=4000
+# confident-learning self-disagreement under Laplace DP (1/(n·ε)); symmetric noise only
+# clean_disagree_* = mean/std self-disagreement on the undegraded sources (threshold calibration)
+# columns: domain,epsilon,rate,seed,det_precision,det_recall,clean_disagree_mean,clean_disagree_std,n_sources,n_degraded
+domain,epsilon,rate,seed,det_precision,det_recall,clean_disagree_mean,clean_disagree_std,n_sources,n_degraded
+finance,1.0,0.45,0,1.0,1.0,0.393,0.0245,6,2
+finance,1.0,0.45,1,0.5,0.5,0.3898,0.0591,6,2
+finance,inf,0.45,0,1.0,1.0,0.3925,0.0225,6,2
+finance,inf,0.45,1,0.5,0.5,0.405,0.0535,6,2

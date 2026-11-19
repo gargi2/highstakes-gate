@@ -1,7 +1,7 @@
 % =====================================================================
 % highstakes-gate bibliography — MIXED verification status.
 %
-% HARD RULE 2 (see CLAUDE.md): every citation is verified by fetching the
+% HARD RULE 2 (see CONVENTIONS.md): every citation is verified by fetching the
 % actual source (arXiv/DOI/publisher) before it enters PROSE. Status tags:
 %
 %   [VERIFIED-FETCH <date>]  confirmed here by fetching the source URL.
@@ -18,9 +18,9 @@
 % VERIFIED-FETCH 2026-08-23 — the four still-open anchors + datasets.
 % ------------------------------------------------------------------
 
-@misc{euaiact2024,
   % [VERIFIED-FETCH 2026-08-23] eur-lex.europa.eu/eli/reg/2024/1689/oj
   % Pillar C: the binding EU risk-management regime for high-stakes AI.
+@misc{euaiact2024,
   author       = {{European Parliament and Council of the European Union}},
   title        = {Regulation ({EU}) 2024/1689 of the European Parliament and of
                   the Council of 13 June 2024 laying down harmonised rules on
@@ -31,9 +31,9 @@
                   ELI: http://data.europa.eu/eli/reg/2024/1689/oj}
 }
 
-@misc{isoiec42001,
   % [VERIFIED-FETCH 2026-08-23] iso.org (ISO/IEC 42001:2023 catalogue entry).
   % Pillar C: the AI management-system standard (assurance framing).
+@misc{isoiec42001,
   author       = {{ISO} and {IEC}},
   title        = {{ISO/IEC} 42001:2023 --- Information technology ---
                   Artificial intelligence --- Management system},
@@ -43,10 +43,10 @@
   note         = {First edition, 2023}
 }
 
-@article{zha2023datacentric,
   % [VERIFIED-FETCH 2026-08-23] arXiv:2303.10158.
   % Pillar D: data-centric AI survey — positions the readiness gate in the
   % data-lifecycle literature (training-data development / data maintenance).
+@article{zha2023datacentric,
   author  = {Zha, Daochen and Bhat, Zaid Pervaiz and Lai, Kwei-Herng and
              Yang, Fan and Jiang, Zhimeng and Zhong, Shaochen and Hu, Xia},
   title   = {Data-centric Artificial Intelligence: A Survey},
@@ -55,9 +55,9 @@
   note    = {arXiv:2303.10158}
 }
 
-@misc{secedgar,
   % [VERIFIED-FETCH 2026-08-23] sec.gov/edgar/searchedgar/aboutedgar.htm
   % Pillar B (finance domain): source of the financial-fields benchmark data.
+@misc{secedgar,
   author       = {{U.S. Securities and Exchange Commission}},
   title        = {{EDGAR}: Electronic Data Gathering, Analysis, and Retrieval System},
   year         = {2024},
@@ -65,9 +65,9 @@
   note         = {Public database of company filings. Accessed 2026-08-23}
 }
 
-@misc{nyctlc,
   % [VERIFIED-FETCH 2026-08-23] nyc.gov/site/tlc/about/tlc-trip-record-data.page
   % Pillar B (government domain candidate): NYC taxi trip records.
+@misc{nyctlc,
   author       = {{New York City Taxi and Limousine Commission}},
   title        = {{TLC} Trip Record Data},
   year         = {2024},
@@ -75,9 +75,9 @@
   note         = {Yellow/green taxi and FHV trip records. Accessed 2026-08-23}
 }
 
-@misc{cmsopenpayments,
   % [VERIFIED-FETCH 2026-08-23] cms.gov/priorities/key-initiatives/open-payments
   % Pillar B (government domain candidate): CMS Open Payments disclosures.
+@misc{cmsopenpayments,
   author       = {{Centers for Medicare \& Medicaid Services}},
   title        = {Open Payments},
   year         = {2024},
@@ -93,19 +93,19 @@
 % full author lists and page numbers against the publisher before submission.
 % ------------------------------------------------------------------
 
+  % [VERIFIED-FETCH 2026-11-03] NIST AI 100-1; MEASURE subcategory IDs re-confirmed
+  % against nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf (Table 3). Pillar C anchor.
 @techreport{nistairmf2023,
-  % [VERIFIED-CARRIED 2026-08-06] NIST AI 100-1. Pillar C anchor.
   author      = {{National Institute of Standards and Technology}},
   title       = {Artificial Intelligence Risk Management Framework ({AI RMF} 1.0)},
   institution = {NIST},
   number      = {NIST AI 100-1},
   year        = {2023},
-  note        = {DOI:10.6028/NIST.AI.100-1. Session 4 re-verifies exact MEASURE
-                 subcategory numbers against the official text.}
+  note        = {DOI:10.6028/NIST.AI.100-1}
 }
 
-@inproceedings{sambasivan2021datacascades,
   % [VERIFIED-CARRIED 2026-08-06] DOI 10.1145/3411764.3445518. CLOSEST PRIOR WORK.
+@inproceedings{sambasivan2021datacascades,
   author    = {Sambasivan, Nithya and Kapania, Shivani and Highfill, Hannah and
                Akrong, Diana and Paritosh, Praveen and Aroyo, Lora M.},
   title     = {``Everyone wants to do the model work, not the data work'':
@@ -115,8 +115,8 @@
   note      = {DOI:10.1145/3411764.3445518}
 }
 
-@inproceedings{mcgregor2021aiid,
   % [VERIFIED-CARRIED 2026-08-06] arXiv:2011.08512. Pillar A corpus.
+@inproceedings{mcgregor2021aiid,
   author    = {McGregor, Sean},
   title     = {Preventing Repeated Real World {AI} Failures by Cataloging
                Incidents: The {AI} Incident Database},
@@ -125,16 +125,17 @@
   note      = {arXiv:2011.08512}
 }
 
+  % [VERIFIED-FETCH 2026-11-03] arXiv:2409.16425 (author list confirmed). Pillar A taxonomy precedent.
 @misc{paeth2024aiid,
-  % [VERIFIED-CARRIED 2026-08-06] arXiv:2409.16425. Pillar A taxonomy precedent.
-  author = {Paeth, Kevin and Atherton, Daniel and McGregor, Sean and others},
+  author = {Paeth, Kevin and Atherton, Daniel and Pittaras, Nikiforos and
+            Frase, Heather and McGregor, Sean},
   title  = {Lessons for Editors of {AI} Incidents from the {AI} Incident Database},
   year   = {2024},
-  note   = {arXiv:2409.16425. TODO-VERIFY full author list before submission}
+  note   = {arXiv:2409.16425}
 }
 
-@inproceedings{mitchell2019modelcards,
   % [VERIFIED-CARRIED 2026-08-06] DOI 10.1145/3287560.3287596. Pillar C.
+@inproceedings{mitchell2019modelcards,
   author    = {Mitchell, Margaret and Wu, Simone and Zaldivar, Andrew and
                Barnes, Parker and Vasserman, Lucy and Hutchinson, Ben and
                Spitzer, Elena and Raji, Inioluwa Deborah and Gebru, Timnit},
@@ -144,8 +145,8 @@
   note      = {DOI:10.1145/3287560.3287596}
 }
 
-@article{gebru2021datasheets,
   % [VERIFIED-CARRIED 2026-08-06] DOI 10.1145/3458723. Pillar C.
+@article{gebru2021datasheets,
   author  = {Gebru, Timnit and Morgenstern, Jamie and Vecchione, Briana and
              Vaughan, Jennifer Wortman and Wallach, Hanna and
              Daum{\'e} III, Hal and Crawford, Kate},
@@ -157,8 +158,8 @@
   note    = {DOI:10.1145/3458723}
 }
 
-@article{bender2018datastatements,
   % [VERIFIED-CARRIED 2026-08-06] TACL 2018, ACL Q18-1041. Pillar C.
+@article{bender2018datastatements,
   author  = {Bender, Emily M. and Friedman, Batya},
   title   = {Data Statements for Natural Language Processing: Toward Mitigating
              System Bias and Enabling Better Science},
@@ -168,8 +169,8 @@
   note    = {ACL Anthology Q18-1041; DOI:10.1162/tacl\_a\_00041}
 }
 
-@inproceedings{sculley2015debt,
   % [VERIFIED-CARRIED 2026-08-06] NeurIPS 2015. Pillars A, D.
+@inproceedings{sculley2015debt,
   author    = {Sculley, D. and Holt, Gary and Golovin, Daniel and Davydov, Eugene
                and Phillips, Todd and Ebner, Dietmar and Chaudhary, Vinay and
                Young, Michael and Crespo, Jean-Fran{\c{c}}ois and Dennison, Dan},
@@ -178,8 +179,8 @@
   year      = {2015}
 }
 
-@misc{amodei2016concrete,
   % [VERIFIED-CARRIED 2026-08-06] arXiv:1606.06565. Pillar A framing.
+@misc{amodei2016concrete,
   author = {Amodei, Dario and Olah, Chris and Steinhardt, Jacob and
             Christiano, Paul and Schulman, John and Man{\'e}, Dan},
   title  = {Concrete Problems in {AI} Safety},
@@ -187,8 +188,8 @@
   note   = {arXiv:1606.06565}
 }
 
-@article{zhang2020mltesting,
   % [VERIFIED-CARRIED 2026-08-06] DOI 10.1109/TSE.2019.2962027. Pillar A method.
+@article{zhang2020mltesting,
   author  = {Zhang, Jie M. and Harman, Mark and Ma, Lei and Liu, Yang},
   title   = {Machine Learning Testing: Survey, Landscapes and Horizons},
   journal = {IEEE Transactions on Software Engineering},
@@ -201,64 +202,90 @@
 % Reusable from FedCheck (domain-agnostic data-quality / DP anchors).
 % ------------------------------------------------------------------
 
+  % [VERIFIED-FETCH 2026-11-03] Crossref DOI 10.1038/s41597-022-01899-x (13-author
+  % list confirmed; published 2023-01-03). Pillar B (health).
 @article{mimiciv,
-  % [VERIFIED-CARRIED 2026-08-02] DOI 10.1038/s41597-022-01899-x. Pillar B (health).
-  author  = {Johnson, Alistair E. W. and Bulgarelli, Lucas and Shen, Lu and others},
+  author  = {Johnson, Alistair E. W. and Bulgarelli, Lucas and Shen, Lu and
+             Gayles, Alvin and Shammout, Ayad and Horng, Steven and
+             Pollard, Tom J. and Hao, Sicheng and Moody, Benjamin and
+             Gow, Brian and Lehman, Li-wei H. and Celi, Leo A. and
+             Mark, Roger G.},
   title   = {{MIMIC-IV}, a freely accessible electronic health record dataset},
   journal = {Scientific Data},
   volume  = {10},
   number  = {1},
+  pages   = {1},
   year    = {2023},
-  note    = {DOI:10.1038/s41597-022-01899-x. TODO-VERIFY full author list}
+  note    = {DOI:10.1038/s41597-022-01899-x}
 }
 
-@book{dwork2014,
-  % [TODO-VERIFY] Laplace mechanism, sensitivity, composition, histogram
-  % sensitivity example. Cited by the DP gate (src/gate/privacy.py).
-  author    = {TODO-VERIFY (Dwork, Cynthia and Roth, Aaron)},
+  % [VERIFIED-FETCH 2026-11-03] Crossref DOI 10.1561/0400000042.
+  % Laplace mechanism, sensitivity, composition. Cited by the DP gate (src/gate/privacy.py).
+@article{dwork2014,
+  author    = {Dwork, Cynthia and Roth, Aaron},
   title     = {The Algorithmic Foundations of Differential Privacy},
-  year      = {TODO-VERIFY},
-  publisher = {TODO-VERIFY},
-  note      = {TODO-VERIFY — confirm the histogram-sensitivity example number}
+  journal   = {Foundations and Trends in Theoretical Computer Science},
+  volume    = {9},
+  number    = {3--4},
+  pages     = {211--487},
+  year      = {2014},
+  doi       = {10.1561/0400000042}
 }
 
+  % [VERIFIED-FETCH 2026-11-03] github.com/great-expectations/great_expectations (Apache-2.0).
+  % Expectation-style data validation baseline (Finding 10).
 @misc{greatexpectations,
-  % [TODO-VERIFY] data-quality validation practice — inspiration for the suite.
-  author = {TODO-VERIFY},
-  title  = {Great Expectations: Always Know What to Expect From Your Data},
-  year   = {TODO-VERIFY},
-  note   = {TODO-VERIFY software/citation}
+  author       = {{Great Expectations}},
+  title        = {Great Expectations: Always Know What to Expect From Your Data},
+  howpublished = {\url{https://github.com/great-expectations/great_expectations}},
+  note         = {Open-source Python data-validation library; ``expressive and extensible unit tests for your data''}
 }
 
+  % [VERIFIED-FETCH 2026-11-03] Crossref DOI 10.1109/18.61115.
+  % JS divergence — used by src/gate/compatibility.py.
 @article{jensenshannon,
-  % [TODO-VERIFY] JS divergence — used by src/gate/compatibility.py.
-  author  = {TODO-VERIFY (Lin, Jianhua)},
-  title   = {Divergence Measures Based on the Shannon Entropy},
-  journal = {TODO-VERIFY (IEEE Transactions on Information Theory)},
-  year    = {TODO-VERIFY},
-  note    = {TODO-VERIFY}
+  author  = {Lin, Jianhua},
+  title   = {Divergence Measures Based on the {Shannon} Entropy},
+  journal = {IEEE Transactions on Information Theory},
+  volume  = {37},
+  number  = {1},
+  pages   = {145--151},
+  year    = {1991},
+  doi     = {10.1109/18.61115}
 }
 
-@misc{diffprivlib,
+  % [VERIFIED-FETCH 2026-11-03] JAIR vol. 70 (2021); DOI 10.1613/jair.1.12125; arXiv:1911.00068.
+  % Origin of the confident-learning method named by the DP-robust label detector (Pillar C).
+@article{northcutt2021confidentlearning,
+  author  = {Northcutt, Curtis G. and Jiang, Lu and Chuang, Isaac L.},
+  title   = {Confident Learning: Estimating Uncertainty in Dataset Labels},
+  journal = {Journal of Artificial Intelligence Research},
+  volume  = {70},
+  year    = {2021},
+  doi     = {10.1613/jair.1.12125},
+  note    = {arXiv:1911.00068}
+}
+
   % [TODO-VERIFY] reference DP implementation for the Laplace cross-check.
+@misc{diffprivlib,
   author = {TODO-VERIFY},
   title  = {Diffprivlib: The {IBM} Differential Privacy Library},
   year   = {TODO-VERIFY},
   note   = {TODO-VERIFY}
 }
 
-@misc{zhou2024dqtools,
   % [TODO-VERIFY] DQ-tools survey named reusable in PIVOT_SCOPE.md §1 but not
   % present in the copied FedCheck refs.bib — locate and verify before citing.
+@misc{zhou2024dqtools,
   author = {TODO-VERIFY},
   title  = {TODO-VERIFY (data-quality tools survey)},
   year   = {TODO-VERIFY},
   note   = {TODO-VERIFY — referenced in PIVOT_SCOPE.md §1}
 }
 
-@misc{mohammed2025dataquality,
   % [TODO-VERIFY] tabular data-quality effects, named reusable in PIVOT_SCOPE §1;
   % not in copied refs.bib — locate and verify before citing.
+@misc{mohammed2025dataquality,
   author = {TODO-VERIFY},
   title  = {TODO-VERIFY (effects of tabular data quality on ML)},
   year   = {TODO-VERIFY},
@@ -270,11 +297,121 @@
 % Self-citation — the validated single-domain instantiation.
 % ------------------------------------------------------------------
 
-@misc{fedcheck,
   % [TODO-VERIFY] FedCheck is unshipped as of 2026-08-23. Fill arXiv ID / venue
   % once posted; this paper cites it as the validated gate instantiation.
+@misc{fedcheck,
   author = {Desai, Gargi and others (TODO-VERIFY author block)},
   title  = {{FedCheck}: Pre-training Data-Readiness Gating for Federated Learning},
   year   = {TODO-VERIFY},
   note   = {TODO-VERIFY — unpublished as of 2026-08-23; add arXiv ID when posted}
+}
+
+
+% ------------------------------------------------------------------
+% VERIFIED-FETCH 2026-08-25 — positioning anchors from the novelty pass.
+% Each carries a `delta:` line = our one-sentence differentiation for the
+% related-work section. See memory/novelty-pass-masking-spine.md.
+% ------------------------------------------------------------------
+
+  % [VERIFIED-FETCH 2026-08-25] proceedings.mlsys.org (MLSys 2019).
+  % Canonical academic data-validation line (the TFX/TFDV system).
+  % delta: these per-batch schema/anomaly signals are our SUBSTRATE; we turn
+  % them into a composite readiness GATE and show the aggregation masks severe
+  % single-dimension defects (detection != blocking) — a critique/extension.
+@inproceedings{breck2019datavalidation,
+  author    = {Polyzotis, Neoklis and Zinkevich, Martin and Roy, Sudip and
+               Breck, Eric and Whang, Steven},
+  title     = {Data Validation for Machine Learning},
+  booktitle = {Proceedings of Machine Learning and Systems (MLSys)},
+  year      = {2019}
+}
+
+  % [VERIFIED-FETCH 2026-08-25] PVLDB 11(12):1781-1794; deem.berlin / dblp.
+  % Deequ — declarative "unit tests for data" at scale.
+  % delta: constraint checks are a baseline substrate; our contribution is the
+  % cross-source, DP-private readiness DECISION layer + the masking finding,
+  % not raw check novelty. Run as an external baseline (NEXT_EXPERIMENTS item 6).
+@article{schelter2018deequ,
+  author  = {Schelter, Sebastian and Lange, Dustin and Schmidt, Philipp and
+             Celikel, Meltem and Bie{\ss}mann, Felix and Grafberger, Andreas},
+  title   = {Automating Large-Scale Data Quality Verification},
+  journal = {Proceedings of the VLDB Endowment},
+  volume  = {11},
+  number  = {12},
+  pages   = {1781--1794},
+  year    = {2018}
+}
+
+  % [VERIFIED-FETCH 2026-08-25] arXiv:1705.02245.
+  % Data Readiness Levels — bands C/B/A (accessibility/validity/utility).
+  % delta: qualitative readiness bands for stakeholder communication; we
+  % operationalize readiness as a quantitative, benchmarked GATE and expose a
+  % failure mode (composite masking) the qualitative bands cannot surface.
+@article{lawrence2017datareadiness,
+  author  = {Lawrence, Neil D.},
+  title   = {Data Readiness Levels},
+  journal = {arXiv preprint},
+  year    = {2017},
+  note    = {arXiv:1705.02245}
+}
+
+  % [VERIFIED-FETCH 2026-08-25] arXiv:2010.07213 (abstract confirmed).
+  % IBM "Data Readiness Report" — dataset-level readiness documentation.
+  % CAVEAT: abstract does NOT confirm class-representation / mislabelled /
+  % bias checks — verify in full text before attributing those in prose.
+  % delta: a REPORT for humans, not an automated gate decision; we study what a
+  % GATING decision provably catches vs. provably blocks.
+@misc{afzal2020datareadinessreport,
+  author = {Afzal, Shazia and C, Rajmohan and Kesarwani, Manish and
+            Mehta, Sameep and Patel, Hima},
+  title  = {Data Readiness Report},
+  year   = {2020},
+  note   = {arXiv:2010.07213}
+}
+
+  % [VERIFIED-FETCH 2026-08-25] arXiv:2205.11518; IEEE BigData 2024.
+  % LIA — DP data-quality evaluation in FL via lazy influence (recall >90%,
+  % epsilon <= 1; obfuscated influence score to a coordinator).
+  % delta: LIA scores data by INFLUENCE ON THE MODEL; our gate validates against
+  % expectation suites (schema/completeness/distribution/label). Cite to avoid
+  % conflation; our DP-summary result is positioned AGAINST LIA, not as a novel
+  % privacy method.
+@inproceedings{rokvic2022lia,
+  author    = {Rokvic, Ljubomir and Danassis, Panayiotis and
+               Karimireddy, Sai Praneeth and Faltings, Boi},
+  title     = {{LIA}: Privacy-Preserving Data Quality Evaluation in Federated
+               Learning Using a Lazy Influence Approximation},
+  booktitle = {IEEE International Conference on Big Data (BigData)},
+  year      = {2024},
+  note      = {arXiv:2205.11518 (2022)}
+}
+
+  % [VERIFIED-FETCH 2026-08-25] arXiv:2505.18213 (full text read); AIDRIN 1.0 at
+  % SSDBM 2024. NEAREST NEIGHBOR to our frame — must-cite.
+  % Full text: AIDRIN reports PER-DIMENSION readiness metrics + visualizations
+  % for a human; NO gate/decision; NO discussion of aggregate-score masking;
+  % v2.0 integrates privacy-preserving FL.
+  % delta: AIDRIN reports; we DECIDE. We make an automated composite
+  % READY/EXCLUDE decision and show composite gating MASKS severe
+  % single-dimension defects — a finding AIDRIN's report-only architecture
+  % cannot produce. Different unit of analysis (decision vs. report).
+@misc{hiniduma2025aidrin,
+  author = {Hiniduma, Kaveen and Ryan, Dylan and Byna, Suren and
+            Bez, Jean Luca and Madduri, Ravi},
+  title  = {{AIDRIN} 2.0: A Framework to Assess Data Readiness for {AI}},
+  year   = {2025},
+  note   = {arXiv:2505.18213; AIDRIN 1.0 at SSDBM 2024}
+}
+
+  % [TODO-VERIFY] TensorFlow Data Validation, SIGMOD 2020 — the production tool
+  % implementing breck2019datavalidation. Title/venue/year confirmed via search;
+  % ACM page 403 and dblp API down 2026-08-25, so the ordered author list is
+  % NOT yet source-confirmed. DO NOT cite in prose until fetched. Cite
+  % breck2019datavalidation for the method meanwhile.
+@misc{caveness2020tfdv,
+  author = {TODO-VERIFY},
+  title  = {{TensorFlow} Data Validation: Data Analysis and Validation in
+            Continuous {ML} Pipelines},
+  year   = {2020},
+  note   = {TODO-VERIFY author list — SIGMOD 2020; DOI 10.1145/3318464.3384707}
 }

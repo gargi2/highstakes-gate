@@ -20,7 +20,7 @@ Smoke (<2 min, CI/dev — synthetic only):
 Reproduce a full synthetic run:
     .venv/Scripts/python.exe experiments/run_crossdomain.py --seeds 5
 
-Real data (per domain; never run full grids from the assistant):
+Real data (per domain; never run full grids in the fast dev loop):
     ... --data-root healthcare=/path/to/clinic.csv --data-root finance=/path/to/edgar \\
         --data-root government=/path/to/openpayments
 """

@@ -24,8 +24,8 @@ Fill the two blanks per incident:
 
 Google's Perspective API, which assigns a toxicity score to online text, seems to award higher toxicity scores to content involving non-white, male, Christian, heterosexual phrases.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `completeness`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -35,8 +35,8 @@ Google's Perspective API, which assigns a toxicity score to online text, seems t
 
 Waze, a Google-owned directions app, led California drivers into the 2017 Skirball wildfires as they tried to evacuate the area.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `structural_schema`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -46,8 +46,8 @@ Waze, a Google-owned directions app, led California drivers into the 2017 Skirba
 
 Facial recognition system in China mistakes celebrity's face on moving billboard for jaywalker
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `completeness`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -57,8 +57,8 @@ Facial recognition system in China mistakes celebrity's face on moving billboard
 
 Between 2014 and 2017, Amazon reportedly developed an AI-powered recruiting tool to score job applicants, trained on a decade of resumes purportedly drawn largely from men. Media reports say the system learned to favor male candidates, penalizing terms like "women's" and graduates from certain all-women's colleges. Efforts to remove these biases reportedly did not guarantee fairness, and the project was ultimately abandoned. Amazon reportedly states recruiters never solely relied on the tool.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `label`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -68,8 +68,8 @@ Between 2014 and 2017, Amazon reportedly developed an AI-powered recruiting tool
 
 A Black man was wrongfully detained by the Detroit Police Department as a result of a false facial recognition (FRT) result.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `cross_source`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -79,8 +79,8 @@ A Black man was wrongfully detained by the Detroit Police Department as a result
 
 Facebook incorrectly labels content relating to an incident between #EndSARS protestors and the Nigerian army as misinformation.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `label`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -90,8 +90,8 @@ Facebook incorrectly labels content relating to an incident between #EndSARS pro
 
 Twitter's photo cropping algorithm was revealed by researchers to favor white and women faces in photos containing multiple faces, prompting the company to stop its use on mobile platform.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `structural_schema`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -101,8 +101,8 @@ Twitter's photo cropping algorithm was revealed by researchers to favor white an
 
 A publicly accessible research model that was trained via Reddit threads showed racially biased advice on moral dilemmas, allegedly demonstrating limitations of language-based models trained on moral judgments.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `completeness`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -112,8 +112,8 @@ A publicly accessible research model that was trained via Reddit threads showed 
 
 Zillow's AI-powered predictive pricing tool Zestimate was allegedly not able to accurately forecast housing prices three to six months in advance due to rapid market changes, prompting division shutdown and layoff of a few thousand employees.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `other`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -123,8 +123,8 @@ Zillow's AI-powered predictive pricing tool Zestimate was allegedly not able to 
 
 Some women using the contraceptive app, Natural Cycles, reported unwanted pregnancies, revealing its algorithm's difficulties in mapping menstrual cycles.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `cross_source`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -134,8 +134,8 @@ Some women using the contraceptive app, Natural Cycles, reported unwanted pregna
 
 Department of Justice’s inmate-recidivism risk assessment tool was reported to have produced racially uneven results, misclassifying risk levels for inmates of color.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `structural_schema`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -145,8 +145,8 @@ Department of Justice’s inmate-recidivism risk assessment tool was reported to
 
 A social networking platform, Giggle, allegedly collected, shared to third-parties, and used sensitive information and biometric data to verify whether a person is a woman via facial recognition, which critics claimed to be discriminatory against women of color and harmful towards trans women.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `other`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -156,8 +156,8 @@ A social networking platform, Giggle, allegedly collected, shared to third-parti
 
 In 2018, during the abortion-decriminalization debate in Argentina, the Salta city government deployed a teenage-pregnancy predictive algorithm built by Microsoft that allegedly lacked a defined purpose, explicitly considered sensitive information such as disability and whether their home had access to hot water.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `structural_schema`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -167,8 +167,8 @@ In 2018, during the abortion-decriminalization debate in Argentina, the Salta ci
 
 Ever AI, now Paravision AI, allegedly failed to inform customers about the development and use of facial recognition that facilitates the sale of customers’ data to various businesses, a business model that critics said was an egregious violation of privacy.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `distributional`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -178,8 +178,8 @@ Ever AI, now Paravision AI, allegedly failed to inform customers about the devel
 
 For years, Waze has, in an attempt to cut travel times, allegedly caused more traffic and guided drivers to make unsafe and often un-permitted traffic decisions, which was described by a Los Angeles city council member as a threat to public safety.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `distributional`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -189,8 +189,8 @@ For years, Waze has, in an attempt to cut travel times, allegedly caused more tr
 
 Waze app was blamed by Los Gatos town residents for contributing to high wildfire hazard risk via allegedly routing weekend beach-going drivers through their neighborhoods, effectively choking off their single escape route in the event of a medical emergency or wildfire.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `cross_source`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -200,8 +200,8 @@ Waze app was blamed by Los Gatos town residents for contributing to high wildfir
 
 An automated plate reader reportedly matched a license plate information, but of a family’s minivan and an alleged motorcycle in Montana that was reportedly stolen earlier in the year, resulting in them and their children being held at gunpoint and detained in handcuffs by multiple Aurora police officers.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `structural_schema`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -211,8 +211,8 @@ An automated plate reader reportedly matched a license plate information, but of
 
 A class-action lawsuit alleged Google failing to provide notice, obtain informed written consent, or publish data retention policies about the collection, storage, and analysis of its face-grouping feature in Google Photos, which violated Illinois Biometric Information Privacy Act (BIPA).
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `distributional`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -222,8 +222,8 @@ A class-action lawsuit alleged Google failing to provide notice, obtain informed
 
 A lawsuit by a former Uber Eats delivery driver alleged the company to have wrongfully dismissed him due to frequent false mismatches of his verification selfies, and discriminated against him via excessive verification checks.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `cross_source`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -233,8 +233,8 @@ A lawsuit by a former Uber Eats delivery driver alleged the company to have wron
 
 Virginia courts’ use of algorithmic predictions of future offending risks were found by researchers failing to reduce incarceration rates, showed racial and age disparities in risk scores and its application, and neither exacerbated or ameliorated historical racial differences in sentencing.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `structural_schema`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -244,8 +244,8 @@ Virginia courts’ use of algorithmic predictions of future offending risks were
 
 Facebook's algorithm was alleged in a complaint by Real Women in Trucking to have selectively shown job advertisements disproportionately against older and female workers in favor of younger men for blue-collar positions.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `provenance_documentation`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -255,8 +255,8 @@ Facebook's algorithm was alleged in a complaint by Real Women in Trucking to hav
 
 ChatGPT-generated responses submitted to smart contract bug bounty platform Immunefi reportedly lacked details to help diagnose technical issues, which reportedly wasted the platform's time, prompting bans to submitters.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `distributional`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -266,8 +266,8 @@ ChatGPT-generated responses submitted to smart contract bug bounty platform Immu
 
 A study published in JAMA Network Open reveals that racial bias built into a commonly used medical diagnostic algorithm for lung function may be leading to underdiagnoses of breathing problems in Black men. The study suggests that as many as 40% more Black male patients might have been accurately diagnosed if the software were not racially biased. The software algorithm adjusts diagnostic thresholds based on race, affecting medical treatments and interventions.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `structural_schema`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -277,8 +277,8 @@ A study published in JAMA Network Open reveals that racial bias built into a com
 
 A class action lawsuit was filed against several facial recognition technology companies for allegedly violating the Illinois Biometric Information Privacy Act (BIPA). The defendants are accused of offering a facial recognition search engine called Pimeyes, which collects images from databases across the internet and scans them into their database seemingly without consent. This action is claimed to invade the privacy of millions of Americans. The lawsuit argues that Pimeyes lacks publicly available policies regarding data storage and deletion, in contravention of BIPA's requirements for informed written consent before collecting biometric data.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `provenance_documentation`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -288,8 +288,8 @@ A class action lawsuit was filed against several facial recognition technology c
 
 AI-powered romantic chatbots, marketed for enhancing mental health, are found to exploit user privacy by harvesting sensitive personal information for data sharing and targeted ads, with inadequate security measures and consent protocols, according to research by the Mozilla Foundation.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `provenance_documentation`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -299,8 +299,8 @@ AI-powered romantic chatbots, marketed for enhancing mental health, are found to
 
 Porn sites are alleged to have used AI-generated images of Breeze Liu without her consent, leading to severe emotional distress. Liu discovered a video of herself on Pornhub, which was then deepfaked and spread across over 800 links. Despite efforts to remove the content, many sites refused to comply, perpetuating the violation and exploitation of her image.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `distributional`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -310,8 +310,8 @@ Porn sites are alleged to have used AI-generated images of Breeze Liu without he
 
 Clearview AI was reportedly fined $33.7 million by the Dutch data protection authority for allegedly creating an illegal facial recognition database by scraping billions of images from the Internet without consent. The company allegedly used AI to convert these images into biometric data and sold the service to law enforcement. This act was reportedly in violation of privacy laws and the GDPR.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `completeness`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---
@@ -321,8 +321,8 @@ Clearview AI was reportedly fined $33.7 million by the Dutch data protection aut
 
 Fable, a book-focused social app, used OpenAI’s API to generate AI-powered year-end reading summaries in December 2024. These summaries allegedly produced biased and offensive remarks about race, gender, and sexual orientation. Fable is reported to have apologized in a social media post on January 1, 2025.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `completeness`
+- Your detectability: `partial`
 - (optional) note: 
 
 ---
@@ -332,8 +332,8 @@ Fable, a book-focused social app, used OpenAI’s API to generate AI-powered yea
 
 A WIRED investigation found that OpenAI’s video generation model, Sora, exhibits representational bias across race, gender, body type, and disability. In tests using 250 prompts, Sora was more likely to depict CEOs and professors as men, flight attendants and childcare workers as women, and showed limited or stereotypical portrayals of disabled individuals and people with larger bodies.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `distributional`
+- Your detectability: `no`
 - (optional) note: 
 
 ---
@@ -343,8 +343,8 @@ A WIRED investigation found that OpenAI’s video generation model, Sora, exhibi
 
 Researchers purportedly affiliated with the University of Zurich reportedly deployed undisclosed AI-generated comments on Reddit's r/ChangeMyView to study persuasion by allegedly fabricating identities such as sexual assault survivors and racial minorities. The experiment reportedly involved unauthorized demographic profiling, emotional manipulation, and violations of subreddit and platform rules. The researchers allegedly deviated from their approved protocol without renewed ethics oversight.
 
-- Your mode: `________`
-- Your detectability: `________`
+- Your mode: `label`
+- Your detectability: `yes`
 - (optional) note: 
 
 ---

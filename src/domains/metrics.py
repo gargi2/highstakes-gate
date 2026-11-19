@@ -4,7 +4,7 @@ The original benchmark measured only aggregate ROC-AUC on a clean holdout, which
 the LEAST sensitive thing to data corruption (verified: clean ≈ corrupted-ungated,
 `docs/FINDINGS.md` Finding 5). Representation/label damage shows up in **worst-group
 accuracy**, **subgroup false-negative-rate gap**, and **calibration (ECE)**, not the
-mean. This module adds those, numpy-only (no new dependency — CLAUDE.md Stack),
+mean. This module adds those, numpy-only (no new dependency — CONVENTIONS.md Stack),
 reusing the tiny logistic model in `domains.base`.
 
 Subgroups are quantile bins of one equity-axis feature evaluated on the clean

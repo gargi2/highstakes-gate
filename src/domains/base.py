@@ -6,13 +6,13 @@ wrapping `gate.partition.degrade`) across several high-stakes domains. A domain
 plugs in by constructing one `Domain` here; see `docs/WALKTHROUGH.md`.
 
 Everything in this module is numpy/pandas only — no sklearn/scipy — so the
-harness has no new hard dependency (see CLAUDE.md Stack). The downstream model
+harness has no new hard dependency (see CONVENTIONS.md Stack). The downstream model
 is a tiny seeded logistic regression with a numpy ROC-AUC, enough to show
 "does gating change the downstream metric?" cheaply.
 
 AGGREGATES ONLY. Loaders and the CLI here print shapes/counts/decisions, never
 rows — restricted rows (e.g. a DUA-bound clinical table) must never reach a
-prompt or a committed file (CLAUDE.md "Local data paths").
+prompt or a committed file (CONVENTIONS.md "Local data paths").
 """
 from __future__ import annotations
 

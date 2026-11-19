@@ -1,0 +1,11 @@
+# 3.3 confident-detector ε-sweep — domain=healthcare
+# Reproduce: .venv/Scripts/python.exe experiments/run_label_epsilon.py --smoke
+# git=6bb0ffa seeds=2 n_sources=6 n_degraded=2 n_rows=1200 max_rows=4000
+# confident-learning self-disagreement under Laplace DP (1/(n·ε)); symmetric noise only
+# clean_disagree_* = mean/std self-disagreement on the undegraded sources (threshold calibration)
+# columns: domain,epsilon,rate,seed,det_precision,det_recall,clean_disagree_mean,clean_disagree_std,n_sources,n_degraded
+domain,epsilon,rate,seed,det_precision,det_recall,clean_disagree_mean,clean_disagree_std,n_sources,n_degraded
+healthcare,1.0,0.45,0,1.0,1.0,0.0468,0.0085,6,2
+healthcare,1.0,0.45,1,1.0,1.0,0.036,0.0136,6,2
+healthcare,inf,0.45,0,1.0,1.0,0.0463,0.0096,6,2
+healthcare,inf,0.45,1,1.0,1.0,0.0512,0.0074,6,2

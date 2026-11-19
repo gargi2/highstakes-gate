@@ -1,0 +1,38 @@
+# Aggregation-rule ablation — domain=government (NEXT_EXPERIMENTS item 4)
+# Reproduce: .venv/Scripts/python.exe experiments/run_aggregation_ablation.py --smoke
+# git=6bb0ffa rules=['weighted_mean', 'max_violation', 'any_critical'] epsilons=['inf'] seeds=2 n_sources=5 n_degraded=2 n_rows=400 max_rows=2000
+# gate reused from src/gate/ (unmodified); decision rules from src/domains/aggregation.py
+# detection = deg.flagged_for_mode (rule-independent); action = decision != READY;
+# gap = det_recall - action_rate; clean_fpr = clean sources not marked READY
+# columns: domain,mode,severity,epsilon,seed,rule,n_sources,n_degraded,n_clean,det_recall,action_rate,gap,clean_fpr,ready,fixable,exclude
+domain,mode,severity,epsilon,seed,rule,n_sources,n_degraded,n_clean,det_recall,action_rate,gap,clean_fpr,ready,fixable,exclude
+government,none,none,inf,0,weighted_mean,5,0,5,,,,0.0,5,0,0
+government,none,none,inf,0,max_violation,5,0,5,,,,0.0,5,0,0
+government,none,none,inf,0,any_critical,5,0,5,,,,0.0,5,0,0
+government,none,none,inf,1,weighted_mean,5,0,5,,,,0.0,5,0,0
+government,none,none,inf,1,max_violation,5,0,5,,,,0.0,5,0,0
+government,none,none,inf,1,any_critical,5,0,5,,,,0.0,5,0,0
+government,structural,high,inf,0,weighted_mean,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,structural,high,inf,0,max_violation,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,structural,high,inf,0,any_critical,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,structural,high,inf,1,weighted_mean,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,structural,high,inf,1,max_violation,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,structural,high,inf,1,any_critical,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,completeness,high,inf,0,weighted_mean,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,completeness,high,inf,0,max_violation,5,2,3,1.0,1.0,0.0,0.0,3,2,0
+government,completeness,high,inf,0,any_critical,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,completeness,high,inf,1,weighted_mean,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,completeness,high,inf,1,max_violation,5,2,3,1.0,1.0,0.0,0.0,3,2,0
+government,completeness,high,inf,1,any_critical,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,distributional,high,inf,0,weighted_mean,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,distributional,high,inf,0,max_violation,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,distributional,high,inf,0,any_critical,5,2,3,1.0,1.0,0.0,1.0,0,0,5
+government,distributional,high,inf,1,weighted_mean,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,distributional,high,inf,1,max_violation,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,distributional,high,inf,1,any_critical,5,2,3,1.0,1.0,0.0,1.0,0,0,5
+government,label,high,inf,0,weighted_mean,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,label,high,inf,0,max_violation,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,label,high,inf,0,any_critical,5,2,3,1.0,1.0,0.0,0.0,3,0,2
+government,label,high,inf,1,weighted_mean,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,label,high,inf,1,max_violation,5,2,3,1.0,0.0,1.0,0.0,5,0,0
+government,label,high,inf,1,any_critical,5,2,3,1.0,1.0,0.0,0.0,3,0,2

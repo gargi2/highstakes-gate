@@ -27,5 +27,5 @@ python -m venv .venv
 .venv/Scripts/python.exe -m pytest tests/ -q
 ```
 
-See `CLAUDE.md` for the hard rules (no fabricated results, verified citations,
+See `CONVENTIONS.md` for the hard rules (no fabricated results, verified citations,
 fixed seeds, human review before commit).
