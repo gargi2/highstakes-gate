@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it, and the preprint below."
+title: "highstakes-gate: pre-training data-readiness gating for high-stakes AI systems"
+type: software
+authors:
+  - family-names: Desai
+    given-names: Gargi
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/gargi2/highstakes-gate"
+preferred-citation:
+  type: article
+  title: "Pre-training data-readiness gating for high-stakes AI systems: a failure taxonomy from production incidents, a validation gate benchmarked across domains, mapped to NIST AI RMF MEASURE"
+  authors:
+    - family-names: Desai
+      given-names: Gargi
+  doi: "10.5281/zenodo.24204022"
+  publisher:
+    name: Zenodo
+  year: 2026

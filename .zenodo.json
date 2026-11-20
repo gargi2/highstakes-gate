@@ -1,0 +1,19 @@
+{
+  "title": "highstakes-gate: pre-training data-readiness gating for high-stakes AI systems",
+  "upload_type": "software",
+  "description": "Reference implementation of the pre-training data-readiness validation gate, failure taxonomy, and cross-domain benchmark harness (healthcare, finance, government) accompanying the preprint. Evaluated on MIMIC-IV, SEC EDGAR, and CMS Open Payments; no restricted data rows are included.",
+  "creators": [
+    { "name": "Desai, Gargi" }
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "keywords": ["data quality", "data readiness", "AI governance", "NIST AI RMF", "differential privacy", "high-stakes AI"],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.24204022",
+      "relation": "isSupplementTo",
+      "scheme": "doi",
+      "resource_type": "publication-preprint"
+    }
+  ]
+}
